@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     index_dir: Path = BASE_DIR / "data" / "index"
     chunk_size: int = 700
     chunk_overlap: int = 120
-    top_k: int = 4
+    top_k: int = 8
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

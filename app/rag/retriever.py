@@ -1,7 +1,29 @@
 from functools import lru_cache
+import re
 
 from app.core.config import get_settings
 from app.rag.vector_store import VectorStore
+
+
+SUBJECT_ALIASES = {
+    "Bazy danych": ("bazy danych", "baz danych", "databases", "database"),
+    "Algorytmy i struktury danych": (
+        "algorytmy i struktury danych",
+        "algorytmow i struktur danych",
+        "algorithms and data structures",
+        "algorithms",
+    ),
+    "Systemy operacyjne": ("systemy operacyjne", "systemow operacyjnych", "operating systems"),
+    "Sieci komputerowe": ("sieci komputerowe", "computer networks"),
+    "Wstep do programowania": ("wstep do programowania", "introduction to programming", "programming"),
+    "Matematyka dyskretna": ("matematyka dyskretna", "discrete mathematics"),
+    "Podstawy sztucznej inteligencji": (
+        "podstawy sztucznej inteligencji",
+        "artificial intelligence",
+        "ai",
+    ),
+    "Architektura komputerow": ("architektura komputerow", "computer architecture"),
+}
 
 
 @lru_cache
@@ -13,4 +35,186 @@ def get_vector_store() -> VectorStore:
 def retrieve(question: str, top_k: int | None = None) -> list[dict]:
     settings = get_settings()
     store = get_vector_store()
-    return store.search(question, top_k or settings.top_k)
+    limit = top_k or settings.top_k
+    results = store.search(question, limit)
+
+    if _is_subject_list_question(question):
+        results = _merge_results(_structured_subject_results(store, question), results)
+    else:
+        subject = detect_subject(question, store.documents)
+        if subject:
+            subject_results = _subject_results(store, subject, question)
+            if subject_results:
+                results = _merge_results(subject_results, results)
+                if _is_assessment_question(question):
+                    results = _filter_subject_assessment_results(results, subject)
+                else:
+                    results = _filter_subject_results(results, subject)
+
+    return results[:limit]
+
+
+def vector_store_status() -> dict:
+    settings = get_settings()
+    try:
+        store = get_vector_store()
+    except Exception:
+        return {"index_loaded": False, "chunk_count": None}
+    return {"index_loaded": True, "chunk_count": store.chunk_count}
+
+
+def _structured_subject_results(store: VectorStore, question: str) -> list[dict]:
+    semester = _extract_semester(question)
+    field = _extract_field(question)
+    matches: list[dict] = []
+
+    for document in store.documents:
+        metadata = document.get("metadata", {})
+        if not metadata.get("subject"):
+            continue
+        if semester and str(metadata.get("semester")) != semester:
+            continue
+        if field and field not in str(metadata.get("field", "")).lower():
+            continue
+        matches.append({"text": document["text"], "metadata": metadata, "score": 1.0})
+
+    return sorted(matches, key=lambda item: (str(item["metadata"].get("semester", "")), str(item["metadata"].get("subject", ""))))
+
+
+def _subject_results(store: VectorStore, subject: str, question: str) -> list[dict]:
+    matches: list[dict] = []
+    assessment_question = _is_assessment_question(question)
+    aliases = _aliases_for_subject(subject, store.documents)
+
+    for document in store.documents:
+        metadata = document.get("metadata", {})
+        metadata_subject = str(metadata.get("subject", ""))
+        text = document.get("text", "")
+        text_blob = _normalize_text(" ".join([metadata_subject, text]))
+
+        exact_metadata_match = _normalize_text(metadata_subject) == _normalize_text(subject)
+        text_match = any(alias in text_blob for alias in aliases)
+        if not exact_metadata_match and not text_match:
+            continue
+        if assessment_question and metadata.get("document_type") not in {"csv", "txt"}:
+            continue
+
+        matches.append({"text": text, "metadata": metadata, "score": 1.0 if exact_metadata_match else 0.85})
+
+    return sorted(matches, key=lambda item: (0 if item["metadata"].get("subject") == subject else 1, -item["score"]))
+
+
+def _merge_results(primary: list[dict], secondary: list[dict]) -> list[dict]:
+    merged: list[dict] = []
+    seen: set[tuple] = set()
+    for item in primary + secondary:
+        metadata = item.get("metadata", {})
+        key = (metadata.get("source"), metadata.get("row"), metadata.get("page"), metadata.get("section"), metadata.get("chunk_id"))
+        if key in seen:
+            continue
+        seen.add(key)
+        merged.append(item)
+    return merged
+
+
+def detect_subject(question: str, documents: list[dict] | None = None) -> str | None:
+    aliases_by_subject = dict(SUBJECT_ALIASES)
+    if documents:
+        for document in documents:
+            subject = document.get("metadata", {}).get("subject")
+            if subject and subject not in aliases_by_subject:
+                aliases_by_subject[str(subject)] = (str(subject),)
+
+    lowered = _normalize_text(question)
+    best: tuple[int, str] | None = None
+    for subject, aliases in aliases_by_subject.items():
+        for alias in _aliases_for_subject(subject, documents or []):
+            if alias and alias in lowered:
+                candidate = (len(alias), subject)
+                if best is None or candidate[0] > best[0]:
+                    best = candidate
+    return best[1] if best else None
+
+
+def _filter_subject_results(results: list[dict], subject: str) -> list[dict]:
+    subject_matches = [item for item in results if _item_matches_subject(item, subject)]
+    return subject_matches if subject_matches else results
+
+
+def _filter_subject_assessment_results(results: list[dict], subject: str) -> list[dict]:
+    filtered = [
+        item for item in results
+        if _item_matches_subject(item, subject)
+        and item.get("metadata", {}).get("document_type") in {"csv", "txt", None}
+    ]
+    return filtered if filtered else _filter_subject_results(results, subject)
+
+
+def _item_matches_subject(item: dict, subject: str) -> bool:
+    metadata = item.get("metadata", {})
+    text = item.get("text", "")
+    aliases = _aliases_for_subject(subject, [])
+    blob = _normalize_text(" ".join(str(value) for value in metadata.values() if value) + " " + text)
+    return any(alias in blob for alias in aliases)
+
+
+def _aliases_for_subject(subject: str, documents: list[dict]) -> tuple[str, ...]:
+    aliases = set(SUBJECT_ALIASES.get(subject, ()))
+    aliases.add(subject)
+    for document in documents:
+        metadata_subject = document.get("metadata", {}).get("subject")
+        if metadata_subject and _normalize_text(str(metadata_subject)) == _normalize_text(subject):
+            aliases.add(str(metadata_subject))
+    return tuple(sorted((_normalize_text(alias) for alias in aliases if alias), key=len, reverse=True))
+
+
+def _normalize_text(text: str) -> str:
+    replacements = str.maketrans("ąćęłńóśźż", "acelnoszz")
+    return " ".join(text.lower().translate(replacements).split())
+
+
+def _is_assessment_question(question: str) -> bool:
+    lowered = _normalize_text(question)
+    markers = (
+        "zaliczenie",
+        "zaliczyc",
+        "assessment",
+        "assess",
+        "exam",
+        "egzamin",
+        "test",
+        "passing",
+        "ocena",
+        "ocen",
+    )
+    return any(marker in lowered for marker in markers)
+
+
+def _is_subject_list_question(question: str) -> bool:
+    lowered = question.lower()
+    subject_words = ("przedmiot", "przedmioty", "subjects", "courses", "classes")
+    list_words = ("jakie", "lista", "wymien", "which", "what", "included", "list")
+    semester_words = ("semestr", "semester")
+    return (
+        any(word in lowered for word in subject_words)
+        and any(word in lowered for word in semester_words)
+        and any(word in lowered for word in list_words)
+    )
+
+
+def _extract_semester(question: str) -> str | None:
+    lowered = question.lower()
+    match = re.search(r"(?:semestr|semester|semestrze)\s*(\d+)", lowered)
+    if match:
+        return match.group(1)
+    match = re.search(r"(\d+)\s*(?:semestr|semester|semestrze)", lowered)
+    if match:
+        return match.group(1)
+    return None
+
+
+def _extract_field(question: str) -> str | None:
+    lowered = question.lower()
+    if "informat" in lowered or "computer science" in lowered:
+        return "informat"
+    return None

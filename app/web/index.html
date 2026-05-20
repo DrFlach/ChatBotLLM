@@ -8,31 +8,97 @@
   </head>
   <body>
     <main class="app-shell">
-      <section class="chat-panel" aria-label="Chatbot programu studiow">
-        <header class="header">
-          <div>
-            <p class="eyebrow">University RAG Assistant</p>
-            <h1>Chatbot programu studiow</h1>
-          </div>
-          <span class="status">FAISS + LLM</span>
-        </header>
-
-        <div id="messages" class="messages">
-          <article class="message assistant">
-            <p>Zapytaj o przedmioty, sylabusy, egzaminy, konsultacje lub zasady zaliczenia. You can also ask in English.</p>
-          </article>
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">University RAG Assistant</p>
+          <h1>Chatbot LLM + RAG dla programu studiów</h1>
+          <p class="subtitle">Zadawaj pytania po polsku lub angielsku na temat programu studiów.</p>
         </div>
+        <span class="status">FAISS + RAG</span>
+      </header>
 
-        <form id="chat-form" class="composer">
-          <textarea
-            id="question"
-            name="question"
-            rows="3"
-            placeholder="Np. Jakie przedmioty sa na Informatyce w semestrze 2?"
-            required
-          ></textarea>
-          <button type="submit">Wyslij</button>
-        </form>
+      <section class="welcome-section" aria-labelledby="welcome-title">
+        <div class="welcome-copy">
+          <h2 id="welcome-title">W czym może pomóc chatbot?</h2>
+          <p>Ten chatbot odpowiada na pytania dotyczące programu studiów na podstawie dokumentów uczelnianych.</p>
+          <p class="trust-note">Jeśli chatbot nie znajdzie informacji w dokumentach, poinformuje o tym zamiast zgadywać.</p>
+        </div>
+      </section>
+
+      <section class="category-grid" aria-label="Obsługiwane kategorie pytań">
+        <article class="category-card">
+          <h3>Przedmioty i semestry</h3>
+          <p>Sprawdzanie listy przedmiotów na wybranym semestrze oraz podstawowych informacji o kursach.</p>
+          <button type="button" class="example-button">Jakie przedmioty są na 2 semestrze?</button>
+          <button type="button" class="example-button">What subjects are included in semester 2?</button>
+        </article>
+
+        <article class="category-card">
+          <h3>Sylabusy</h3>
+          <p>Pytania o opisy przedmiotów, zakres materiału i informacje z sylabusów.</p>
+          <button type="button" class="example-button">Co obejmuje przedmiot Bazy danych?</button>
+          <button type="button" class="example-button">What is covered in the Databases course?</button>
+        </article>
+
+        <article class="category-card">
+          <h3>Egzaminy i zaliczenia</h3>
+          <p>Terminy egzaminów, zasady oceniania, projekty, testy i wymagania zaliczeniowe.</p>
+          <button type="button" class="example-button">Jak wygląda zaliczenie przedmiotu Bazy danych?</button>
+          <button type="button" class="example-button">How is the Databases course assessed?</button>
+        </article>
+
+        <article class="category-card">
+          <h3>Wykładowcy i konsultacje</h3>
+          <p>Informacje o prowadzących, dyżurach, godzinach konsultacji i lokalizacji spotkań.</p>
+          <button type="button" class="example-button">Kiedy dr Anna Kowalska ma konsultacje?</button>
+          <button type="button" class="example-button">What are Anna Kowalska’s consultation hours?</button>
+        </article>
+
+        <article class="category-card">
+          <h3>Regulamin studiów</h3>
+          <p>Pytania o zasady egzaminów, zaliczania semestru, ECTS i wymagania regulaminowe.</p>
+          <button type="button" class="example-button">Jakie są zasady egzaminów?</button>
+          <button type="button" class="example-button">What are the exam rules?</button>
+        </article>
+
+        <article class="category-card">
+          <h3>Pytania po polsku i angielsku</h3>
+          <p>Chatbot obsługuje pytania w obu językach i odpowiada zgodnie z językiem użytkownika.</p>
+          <button type="button" class="example-button">Co potrafisz?</button>
+          <button type="button" class="example-button">What can you do?</button>
+        </article>
+      </section>
+
+      <section class="demo-layout">
+        <aside class="sidebar" aria-label="Przykładowe pytania">
+          <section class="rag-note">
+            <h2>Jak działa system</h2>
+            <p>System korzysta z RAG: najpierw wyszukuje podobne fragmenty dokumentów w FAISS, a następnie generuje odpowiedź na podstawie znalezionego kontekstu.</p>
+          </section>
+        </aside>
+
+        <section class="chat-panel" aria-label="Chatbot programu studiów">
+          <div id="messages" class="messages">
+            <article class="message assistant">
+              <div class="answer">
+                <strong>Cześć! Jestem chatbotem RAG dla programu studiów.</strong>
+                <p>Możesz zapytać mnie o przedmioty, sylabusy, egzaminy, wykładowców, konsultacje oraz zasady zaliczeń.</p>
+                <p>You can ask questions in Polish or English.</p>
+              </div>
+            </article>
+          </div>
+
+          <form id="chat-form" class="composer">
+            <textarea
+              id="question"
+              name="question"
+              rows="3"
+              placeholder="Np. Jakie przedmioty są na Informatyce w semestrze 2?"
+              required
+            ></textarea>
+            <button type="submit">Wyślij</button>
+          </form>
+        </section>
       </section>
     </main>
     <script src="/static/app.js"></script>

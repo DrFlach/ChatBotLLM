@@ -70,7 +70,7 @@ app/
   main.py                 - konfiguracja aplikacji FastAPI
   api/routes.py           - endpoint /chat
   core/config.py          - ustawienia aplikacji
-  rag/ingest.py           - wczytywanie dokumentow
+  rag/ingest.py           - wczytywanie dokumentow TXT, CSV, HTML i PDF
   rag/chunker.py          - dzielenie tekstu na fragmenty
   rag/vector_store.py     - zapis i odczyt indeksu FAISS
   rag/retriever.py        - wyszukiwanie semantyczne
@@ -105,7 +105,7 @@ Pipeline sklada sie z nastepujacych krokow:
 1. Wczytanie plikow z katalogu `data/raw`.
 2. Obsluga formatow `TXT`, `CSV`, `HTML`, `HTM` oraz `PDF`.
 3. Zamiana dokumentow na tekst i metadane, na przykład nazwe pliku, numer strony lub numer wiersza CSV.
-4. Podzial tekstu na mniejsze fragmenty z czesciowym nakladaniem.
+4. Podzial tekstu na mniejsze fragmenty z uwzglednieniem akapitow i linii.
 5. Utworzenie embeddingow dla kazdego fragmentu.
 6. Zapis wektorow do indeksu FAISS.
 7. Zapis tekstow i metadanych do pliku `data/index/documents.json`.
@@ -139,7 +139,25 @@ Przykladowa odpowiedz:
 
 ```json
 {
-  "status": "ok"
+  "status": "ok",
+  "index_loaded": true,
+  "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "vector_store": "FAISS"
+}
+```
+
+### `GET /config`
+
+Zwraca bezpieczne informacje konfiguracyjne. Endpoint nie ujawnia klucza OpenAI.
+
+Przykladowa odpowiedz:
+
+```json
+{
+  "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "vector_database": "FAISS",
+  "openai_configured": false,
+  "indexed_chunks": 20
 }
 ```
 
@@ -162,10 +180,15 @@ Przykladowa odpowiedz:
   "answer": "...",
   "sources": [
     {
-      "source": "sample_program_studiow.txt",
+      "file_name": "sample_program_studiow.txt",
+      "document_type": "txt",
+      "chunk_number": 0,
+      "subject": null,
+      "semester": null,
       "score": 0.81,
       "metadata": {
         "source": "sample_program_studiow.txt",
+        "document_type": "txt",
         "chunk_id": 0
       },
       "preview": "..."

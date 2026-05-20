@@ -58,6 +58,10 @@ class VectorStore:
             encoding="utf-8",
         )
 
+    @property
+    def chunk_count(self) -> int:
+        return len(self.documents)
+
     def search(self, query: str, top_k: int = 4) -> list[dict]:
         if self.index.ntotal == 0:
             return []
@@ -96,3 +100,17 @@ def _load_embedding_model(model_name: str) -> SentenceTransformer:
                 "Could not load embedding model. Check internet access for the first run "
                 "or verify that the model is already cached locally."
             ) from offline_error
+
+
+def index_exists(index_dir: Path) -> bool:
+    return (index_dir / INDEX_FILE).exists() and (index_dir / DOCS_FILE).exists()
+
+
+def indexed_chunk_count(index_dir: Path) -> int | None:
+    docs_path = index_dir / DOCS_FILE
+    if not docs_path.exists():
+        return None
+    try:
+        return len(json.loads(docs_path.read_text(encoding="utf-8")))
+    except json.JSONDecodeError:
+        return None

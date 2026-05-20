@@ -21,7 +21,3 @@ app.include_router(router)
 def index() -> FileResponse:
     return FileResponse(web_dir / "index.html")
 
-
-@app.get("/health")
-def health() -> dict:
-    return {"status": "ok"}

@@ -1,0 +1,7 @@
+field,semester,subject,ects,lecturer,description,assessment
+Informatyka,1,Wstep do programowania,6,dr Anna Kowalska,"Podstawy skladni Python, funkcje, listy, slowniki, pliki oraz proste testy jednostkowe.","Laboratoria 40%, projekt 30%, egzamin praktyczny 30%. Warunkiem zaliczenia jest minimum 50% punktow z laboratoriow."
+Informatyka,1,Matematyka dyskretna,5,dr Piotr Nowak,"Logika, zbiory, relacje, grafy, indukcja matematyczna i elementy kombinatoryki.","Kolokwium 40%, egzamin pisemny 60%. Do egzaminu dopuszcza minimum 50% z cwiczen."
+Informatyka,2,Algorytmy i struktury danych,6,dr Anna Kowalska,"Analiza zlozonosci, sortowanie, kolejki, stosy, drzewa, grafy oraz tablice mieszajace.","Projekt programistyczny 40%, laboratoria 20%, egzamin 40%."
+Informatyka,2,Bazy danych,5,dr hab. Maria Wisniewska,"Model relacyjny, SQL, normalizacja, transakcje, indeksy i projektowanie schematow baz danych.","Test SQL 30%, projekt zespolowy 40%, odpowiedz ustna 30%."
+Informatyka,2,Systemy operacyjne,5,dr Piotr Nowak,"Procesy, watki, planowanie, pamiec wirtualna, systemy plikow i podstawy administracji Linux.","Laboratoria 50%, egzamin 50%."
+Informatyka,2,Podstawy sztucznej inteligencji,4,dr hab. Maria Wisniewska,"Przeszukiwanie przestrzeni stanow, podstawy uczenia maszynowego, klasyfikacja i etyka AI.","Projekt 50%, test koncowy 50%."

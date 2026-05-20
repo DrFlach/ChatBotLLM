@@ -1,0 +1,22 @@
+Program studiow: Informatyka, studia pierwszego stopnia
+
+Semestr 1:
+- Wstep do programowania, 30 godzin wykladu, 30 godzin laboratorium, 6 ECTS. Prowadzacy: dr Anna Kowalska.
+- Matematyka dyskretna, 30 godzin wykladu, 15 godzin cwiczen, 5 ECTS. Prowadzacy: dr Piotr Nowak.
+- Architektura komputerow, 20 godzin wykladu, 20 godzin laboratorium, 4 ECTS. Prowadzacy: mgr Tomasz Zielinski.
+- Jezyk angielski B2, 30 godzin cwiczen, 2 ECTS.
+
+Semestr 2:
+- Algorytmy i struktury danych, 30 godzin wykladu, 30 godzin laboratorium, 6 ECTS. Prowadzacy: dr Anna Kowalska.
+- Bazy danych, 30 godzin wykladu, 30 godzin laboratorium, 5 ECTS. Prowadzacy: dr hab. Maria Wisniewska.
+- Systemy operacyjne, 30 godzin wykladu, 20 godzin laboratorium, 5 ECTS. Prowadzacy: dr Piotr Nowak.
+- Podstawy sztucznej inteligencji, 20 godzin wykladu, 20 godzin projekt, 4 ECTS. Prowadzacy: dr hab. Maria Wisniewska.
+
+Terminy ocen i egzaminow:
+- Wstep do programowania: projekt koncowy do 15 czerwca 2026, egzamin praktyczny 22 czerwca 2026.
+- Matematyka dyskretna: kolokwium 10 maja 2026, egzamin 18 czerwca 2026.
+- Algorytmy i struktury danych: projekt do 12 czerwca 2026, egzamin 25 czerwca 2026.
+- Bazy danych: test SQL 5 czerwca 2026, projekt zespolowy do 20 czerwca 2026.
+
+English summary:
+The Computer Science undergraduate program includes programming, discrete mathematics, algorithms, databases, operating systems and artificial intelligence. Students may ask about semesters, subjects, exams, assessment dates and lecturers.

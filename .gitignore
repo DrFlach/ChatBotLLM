@@ -6,5 +6,6 @@ __pycache__/
 .venv/
 venv/
 .env
+AGENTS.md
 data/index/*
 !data/index/.gitkeep

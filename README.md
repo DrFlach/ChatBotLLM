@@ -360,6 +360,24 @@ pytest
 
 Testy jednostkowe sprawdzaja m.in. dzielenie tekstu, dzialanie bazy wektorowej oraz fallback generatora odpowiedzi.
 
+## Deploy na Render
+
+Zalecane ustawienia uslugi Render:
+
+- Root Directory: zostaw puste, jezeli projekt znajduje sie w katalogu glownym repozytorium
+- Build Command: `pip install -r requirements.txt && python scripts/ingest_documents.py`
+- Start Command: `bash start.sh`
+
+Indeks FAISS jest budowany podczas kroku build, dzieki czemu aplikacja nie traci czasu na dluga ingestie przed otwarciem portu HTTP. Plik `start.sh` tylko sprawdza, czy istnieje `data/index/faiss.index`, a jezeli indeksu brakuje, probuje go odbudowac awaryjnie.
+
+Na Render serwer musi nasluchiwac na `0.0.0.0` i uzywac zmiennej srodowiskowej `PORT`. Skrypt startowy uruchamia aplikacje poleceniem:
+
+```bash
+exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+```
+
+Klucz OpenAI API nie jest wymagany do wdrozenia, poniewaz projekt dziala rowniez w trybie fallback bez OpenAI API. Pliki zrodlowe bazy wiedzy w `data/raw` powinny byc commitowane do repozytorium. Katalog `data/index` jest ignorowany w `.gitignore` poza plikiem `.gitkeep`, dlatego na Render indeks jest odtwarzany przez Build Command.
+
 ## Rozszerzanie bazy wiedzy
 
 Baze wiedzy mozna rozszerzac bez zmian w kodzie aplikacji. Wystarczy dodac nowe pliki do katalogu `data/raw` i ponownie zbudowac indeks FAISS.

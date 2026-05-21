@@ -17,8 +17,8 @@ def test_txt_ingestion(tmp_path: Path) -> None:
 def test_csv_ingestion_preserves_structured_metadata(tmp_path: Path) -> None:
     path = tmp_path / "sylabus.csv"
     path.write_text(
-        "field,semester,subject,ects,lecturer,exam_date,assessment_method\n"
-        "Informatyka,2,Bazy danych,5,dr Maria Wisniewska,5 czerwca 2026,Projekt 40%\n",
+        "field,semester,subject,ects,lecturer,description,exam_date,assessment_method\n"
+        "Informatyka,2,Bazy danych,5,dr Maria Wisniewska,Model relacyjny,5 czerwca 2026,Projekt 40%\n",
         encoding="utf-8",
     )
 
@@ -30,6 +30,7 @@ def test_csv_ingestion_preserves_structured_metadata(tmp_path: Path) -> None:
     assert metadata["subject"] == "Bazy danych"
     assert metadata["lecturer"] == "dr Maria Wisniewska"
     assert metadata["ects"] == "5"
+    assert metadata["description"] == "Model relacyjny"
     assert metadata["exam_date"] == "5 czerwca 2026"
     assert metadata["assessment_method"] == "Projekt 40%"
 

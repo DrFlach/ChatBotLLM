@@ -1,22 +1,56 @@
 Program studiow: Informatyka, studia pierwszego stopnia
+Field of study: Computer Science
+Rok akademicki: 2025/2026
 
 Semestr 1:
-- Wstep do programowania, 30 godzin wykladu, 30 godzin laboratorium, 6 ECTS. Prowadzacy: dr Anna Kowalska.
-- Matematyka dyskretna, 30 godzin wykladu, 15 godzin cwiczen, 5 ECTS. Prowadzacy: dr Piotr Nowak.
-- Architektura komputerow, 20 godzin wykladu, 20 godzin laboratorium, 4 ECTS. Prowadzacy: mgr Tomasz Zielinski.
-- Jezyk angielski B2, 30 godzin cwiczen, 2 ECTS.
+- Wstep do programowania / Introduction to Programming, 30 godzin wykladu, 30 godzin laboratorium, 6 ECTS. Prowadzacy: dr Anna Kowalska.
+- Matematyka dyskretna / Discrete Mathematics, 30 godzin wykladu, 15 godzin cwiczen, 5 ECTS. Prowadzacy: dr Piotr Nowak.
+- Architektura komputerow / Computer Architecture, 20 godzin wykladu, 20 godzin laboratorium, 4 ECTS. Prowadzacy: mgr Tomasz Zielinski.
+- Jezyk angielski B2 / English B2, 30 godzin cwiczen, 2 ECTS. Prowadzacy: mgr Ewa Malinowska.
+- Podstawy technologii webowych / Web Technologies Basics, 15 godzin wykladu, 30 godzin laboratorium, 4 ECTS. Prowadzacy: dr Lukasz Mazur.
 
 Semestr 2:
-- Algorytmy i struktury danych, 30 godzin wykladu, 30 godzin laboratorium, 6 ECTS. Prowadzacy: dr Anna Kowalska.
-- Bazy danych, 30 godzin wykladu, 30 godzin laboratorium, 5 ECTS. Prowadzacy: dr hab. Maria Wisniewska.
-- Systemy operacyjne, 30 godzin wykladu, 20 godzin laboratorium, 5 ECTS. Prowadzacy: dr Piotr Nowak.
-- Podstawy sztucznej inteligencji, 20 godzin wykladu, 20 godzin projekt, 4 ECTS. Prowadzacy: dr hab. Maria Wisniewska.
+- Algorytmy i struktury danych / Algorithms and Data Structures, 30 godzin wykladu, 30 godzin laboratorium, 6 ECTS. Prowadzacy: dr Anna Kowalska.
+- Bazy danych / Databases, 30 godzin wykladu, 30 godzin laboratorium, 5 ECTS. Prowadzacy: dr hab. Maria Wisniewska.
+- Systemy operacyjne / Operating Systems, 30 godzin wykladu, 20 godzin laboratorium, 5 ECTS. Prowadzacy: dr Piotr Nowak.
+- Podstawy sztucznej inteligencji / Artificial Intelligence Basics, 20 godzin wykladu, 20 godzin projektu, 4 ECTS. Prowadzacy: dr hab. Maria Wisniewska.
+- Programowanie obiektowe / Object-Oriented Programming, 20 godzin wykladu, 30 godzin laboratorium, 5 ECTS. Prowadzacy: dr Lukasz Mazur.
+
+Semestr 3:
+- Sieci komputerowe / Computer Networks, 30 godzin wykladu, 30 godzin laboratorium, 5 ECTS. Prowadzacy: dr Pawel Kaczmarek.
+- Inzynieria oprogramowania / Software Engineering, 30 godzin wykladu, 30 godzin projektu, 5 ECTS. Prowadzacy: dr Katarzyna Wrobel.
+- Programowanie aplikacji webowych / Web Application Development, 20 godzin wykladu, 40 godzin laboratorium, 5 ECTS. Prowadzacy: dr Lukasz Mazur.
+- Statystyka dla informatykow / Statistics for Computer Scientists, 30 godzin wykladu, 15 godzin cwiczen, 4 ECTS. Prowadzacy: dr Piotr Nowak.
+- Bezpieczenstwo systemow IT / IT Systems Security, 20 godzin wykladu, 20 godzin laboratorium, 4 ECTS. Prowadzacy: dr Pawel Kaczmarek.
+
+Semestr 4:
+- Projekt zespolowy / Team Software Project, 15 godzin seminarium, 45 godzin projektu, 6 ECTS. Prowadzacy: dr Katarzyna Wrobel.
+- Chmury obliczeniowe / Cloud Computing, 20 godzin wykladu, 20 godzin laboratorium, 4 ECTS. Prowadzacy: dr Pawel Kaczmarek.
+- Aplikacje mobilne / Mobile Applications, 20 godzin wykladu, 30 godzin laboratorium, 4 ECTS. Prowadzacy: mgr Ewa Malinowska.
+- Hurtownie danych / Data Warehouses, 30 godzin wykladu, 30 godzin laboratorium, 5 ECTS. Prowadzacy: dr hab. Maria Wisniewska.
+- Metody numeryczne / Numerical Methods, 30 godzin wykladu, 15 godzin laboratorium, 4 ECTS. Prowadzacy: dr Piotr Nowak.
 
 Terminy ocen i egzaminow:
 - Wstep do programowania: projekt koncowy do 15 czerwca 2026, egzamin praktyczny 22 czerwca 2026.
 - Matematyka dyskretna: kolokwium 10 maja 2026, egzamin 18 czerwca 2026.
+- Architektura komputerow: test koncowy 16 czerwca 2026.
+- Jezyk angielski B2: test jezykowy 12 czerwca 2026.
+- Podstawy technologii webowych: projekt strony i test 19 czerwca 2026.
 - Algorytmy i struktury danych: projekt do 12 czerwca 2026, egzamin 25 czerwca 2026.
 - Bazy danych: test SQL 5 czerwca 2026, projekt zespolowy do 20 czerwca 2026.
+- Systemy operacyjne: egzamin 24 czerwca 2026.
+- Podstawy sztucznej inteligencji: projekt i test koncowy 17 czerwca 2026.
+- Programowanie obiektowe: egzamin praktyczny 26 czerwca 2026.
+- Sieci komputerowe: egzamin 20 czerwca 2026.
+- Inzynieria oprogramowania: egzamin 23 czerwca 2026.
+- Programowanie aplikacji webowych: obrona projektu 27 czerwca 2026.
+- Statystyka dla informatykow: egzamin 21 czerwca 2026.
+- Bezpieczenstwo systemow IT: test 28 czerwca 2026.
+- Projekt zespolowy: prezentacja projektu 30 czerwca 2026.
+- Chmury obliczeniowe: test i projekt wdrozeniowy 18 czerwca 2026.
+- Aplikacje mobilne: prezentacja projektu 24 czerwca 2026.
+- Hurtownie danych: egzamin 25 czerwca 2026.
+- Metody numeryczne: egzamin 22 czerwca 2026.
 
 English summary:
-The Computer Science undergraduate program includes programming, discrete mathematics, algorithms, databases, operating systems and artificial intelligence. Students may ask about semesters, subjects, exams, assessment dates and lecturers.
+The Computer Science undergraduate program covers programming, mathematics, computer architecture, algorithms, databases, operating systems, artificial intelligence, networks, software engineering, web applications, security, cloud computing, mobile applications, data warehouses and numerical methods. Students may ask about semesters, subjects, ECTS, hours, exams, assessment dates, lecturers and consultation hours.

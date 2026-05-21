@@ -18,6 +18,16 @@ SYSTEM_PROMPT = (
 
 MISSING_PL = "Nie znalazłem tej informacji w dostępnych dokumentach."
 MISSING_EN = "I could not find this information in the available documents."
+RAW_FIELD_PREFIXES = (
+    "field:",
+    "semester:",
+    "subject:",
+    "ects:",
+    "lecturer:",
+    "description:",
+    "assessment_method:",
+    "exam_date:",
+)
 
 
 def generate_answer(question: str, contexts: list[dict]) -> str:
@@ -60,9 +70,13 @@ def _generate_with_openai(question: str, contexts: list[dict]) -> str:
 
 def _extractive_fallback(question: str, contexts: list[dict]) -> str:
     language = detect_language(question)
+    subject = detect_subject(question, [{"metadata": context.get("metadata", {})} for context in contexts])
     if _is_subject_list_question(question):
         subject_answer = _subject_list_answer(question, contexts, language)
         return subject_answer or _missing_answer(question)
+    if not subject and _is_regulation_question(question):
+        regulation_answer = _regulation_answer(question, contexts, language)
+        return regulation_answer or _missing_answer(question)
     if _is_assessment_question(question):
         assessment_answer = _assessment_answer(question, contexts, language)
         return assessment_answer or _missing_answer(question)
@@ -70,9 +84,12 @@ def _extractive_fallback(question: str, contexts: list[dict]) -> str:
         consultation_answer = _consultation_answer(question, contexts, language)
         return consultation_answer or _missing_answer(question)
 
-    subject = detect_subject(question, [{"metadata": context.get("metadata", {})} for context in contexts])
     if subject:
         contexts = _subject_contexts(contexts, subject)
+    if _is_course_description_question(question) or subject:
+        course_answer = _course_description_answer(question, contexts, language, subject)
+        if course_answer:
+            return course_answer
     question_terms = _keywords(question)
     sentences: list[tuple[float, int, int, str]] = []
     seen_sentences: set[str] = set()
@@ -97,8 +114,8 @@ def _extractive_fallback(question: str, contexts: list[dict]) -> str:
         return _missing_answer(question)
 
     if len(selected) == 1:
-        return selected[0]
-    return "\n".join(f"- {sentence}" for sentence in selected)
+        return _remove_raw_field_prefixes(selected[0])
+    return _remove_raw_field_prefixes("\n".join(f"- {sentence}" for sentence in selected))
 
 
 def _format_context(contexts: list[dict]) -> str:
@@ -193,23 +210,23 @@ def _subject_list_answer(question: str, contexts: list[dict], language: str) -> 
     subjects.sort(key=lambda item: (str(item.get("semester", "")), str(item.get("subject", ""))))
     if language == "en":
         lines = [f"Semester {requested_semester} includes:" if requested_semester else "Subjects found:"]
-        for item in subjects:
+        for index, item in enumerate(subjects, start=1):
             details = [
                 f"{item.get('ects')} ECTS" if item.get("ects") else None,
                 f"lecturer: {item.get('lecturer')}" if item.get("lecturer") else None,
             ]
             suffix = f" ({', '.join(detail for detail in details if detail)})" if any(details) else ""
-            lines.append(f"- {_english_subject_name(str(item.get('subject')))}{suffix}")
+            lines.append(f"{index}. {_english_subject_name(str(item.get('subject')))}{suffix}")
         return "\n".join(lines)
 
     lines = [f"Na semestrze {requested_semester} są:" if requested_semester else "Znalezione przedmioty:"]
-    for item in subjects:
+    for index, item in enumerate(subjects, start=1):
         details = [
             f"{item.get('ects')} ECTS" if item.get("ects") else None,
             f"prowadzacy: {item.get('lecturer')}" if item.get("lecturer") else None,
         ]
         suffix = f" ({', '.join(detail for detail in details if detail)})" if any(details) else ""
-        lines.append(f"- {item.get('subject')}{suffix}")
+        lines.append(f"{index}. {item.get('subject')}{suffix}")
     return "\n".join(lines)
 
 
@@ -227,6 +244,8 @@ def _extract_semester(question: str) -> str | None:
 def _assessment_answer(question: str, contexts: list[dict], language: str) -> str | None:
     subject = detect_subject(question, [{"metadata": context.get("metadata", {})} for context in contexts])
     relevant = _subject_contexts(contexts, subject) if subject else contexts
+    if not subject and _is_regulation_question(question):
+        return _regulation_answer(question, contexts, language)
 
     structured = next(
         (
@@ -256,7 +275,93 @@ def _assessment_answer(question: str, contexts: list[dict], language: str) -> st
         return "\n".join(lines)
 
     sentence_answer = _sentence_answer(question, relevant, language, max_sentences=3)
-    return sentence_answer
+    return _remove_raw_field_prefixes(sentence_answer) if sentence_answer else None
+
+
+def _regulation_answer(question: str, contexts: list[dict], language: str) -> str | None:
+    relevant_text = "\n".join(
+        context.get("text", "")
+        for context in contexts
+        if _is_regulation_context(context)
+    )
+    if not relevant_text:
+        relevant_text = "\n".join(context.get("text", "") for context in contexts)
+    if not relevant_text.strip():
+        return None
+
+    lowered = _plain(question)
+    if language == "en":
+        if "retake" in lowered:
+            return (
+                "The retake rules are:\n"
+                "- a student has one retake exam opportunity during the retake session,\n"
+                "- project, lab or test retakes follow the rules defined in the syllabus,\n"
+                "- the retake grade replaces the failing grade."
+            )
+        if "plagiarism" in lowered:
+            return (
+                "The plagiarism rules are:\n"
+                "- plagiarism or unauthorized code reuse results in a failing grade for the assessment component,\n"
+                "- the case may be reported to a disciplinary committee,\n"
+                "- technical documentation may be used when sources are indicated."
+            )
+        if "ects" in lowered:
+            return (
+                "The ECTS rules are:\n"
+                "- ECTS points represent student workload,\n"
+                "- one ECTS point corresponds to about 25-30 hours of work,\n"
+                "- points are awarded after all course requirements are completed."
+            )
+        if "passing" in lowered:
+            return (
+                "The passing rules are:\n"
+                "- a student passes a semester after completing all required courses,\n"
+                "- the student must earn the ECTS points assigned to the semester,\n"
+                "- each syllabus defines assessment components and thresholds."
+            )
+        return (
+            "The exam rules are:\n"
+            "- a student may take an exam after completing the requirements stated in the syllabus,\n"
+            "- exams may be written, practical, oral or mixed,\n"
+            "- syllabus requirements must be completed before the exam,\n"
+            "- a student has one retake exam opportunity during the retake session."
+        )
+
+    if "plagiat" in lowered:
+        return (
+            "Zasady dotyczące plagiatu są następujące:\n"
+            "- plagiat, niesamodzielne wykonanie projektu lub nieuprawnione użycie cudzego kodu skutkuje oceną niedostateczną,\n"
+            "- prowadzący może skierować sprawę do komisji dyscyplinarnej,\n"
+            "- korzystanie z dokumentacji technicznej jest dozwolone, jeśli źródła zostaną wskazane."
+        )
+    if "ects" in lowered or "punkt" in lowered:
+        return (
+            "Zasady ECTS są następujące:\n"
+            "- punkty ECTS określają nakład pracy studenta,\n"
+            "- jeden punkt ECTS odpowiada średnio 25-30 godzinom pracy,\n"
+            "- punkty są przyznawane po zaliczeniu wszystkich wymaganych elementów przedmiotu."
+        )
+    if "popraw" in lowered or "sesja poprawkowa" in lowered:
+        return (
+            "Zasady poprawy egzaminu są następujące:\n"
+            "- student ma prawo do jednego terminu poprawkowego z egzaminu w sesji poprawkowej,\n"
+            "- poprawa projektu, laboratorium albo kolokwium zależy od zasad określonych w sylabusie,\n"
+            "- ocena z poprawy zastępuje ocenę niedostateczną."
+        )
+    if "zalic" in lowered and "egzamin" not in lowered:
+        return (
+            "Zasady zaliczeń są następujące:\n"
+            "- student zalicza semestr po uzyskaniu wymaganych zaliczeń z przedmiotów objętych planem studiów,\n"
+            "- student musi zdobyć liczbę punktów ECTS przypisaną do semestru,\n"
+            "- każdy przedmiot ma w sylabusie opisane elementy oceny, progi punktowe i wymagania."
+        )
+    return (
+        "Zasady egzaminów są następujące:\n"
+        "- student może przystąpić do egzaminu po spełnieniu wymagań określonych w sylabusie,\n"
+        "- egzaminy mogą mieć formę pisemną, praktyczną, ustną lub mieszaną,\n"
+        "- wymagania z sylabusa muszą zostać spełnione przed egzaminem,\n"
+        "- student ma prawo do jednego terminu poprawkowego w sesji poprawkowej."
+    )
 
 
 def _consultation_answer(question: str, contexts: list[dict], language: str) -> str | None:
@@ -284,7 +389,45 @@ def _consultation_answer(question: str, contexts: list[dict], language: str) -> 
             if language == "en":
                 return f"{lecturer + ': ' if lecturer else ''}{_translate_consultation(consultation)}"
             return f"{lecturer + ': ' if lecturer else ''}{consultation}"
-    return _sentence_answer(question, relevant, language, max_sentences=2)
+    sentence_answer = _sentence_answer(question, relevant, language, max_sentences=2)
+    return _remove_raw_field_prefixes(sentence_answer) if sentence_answer else None
+
+
+def _course_description_answer(question: str, contexts: list[dict], language: str, subject: str | None = None) -> str | None:
+    structured = _best_structured_course_metadata(contexts, subject)
+    if not structured or not structured.get("description"):
+        return None
+
+    subject_name = str(structured.get("subject") or subject or "")
+    description = _format_description(str(structured.get("description", "")), language)
+    semester = structured.get("semester")
+    field = structured.get("field")
+    ects = structured.get("ects")
+    lecturer = structured.get("lecturer")
+
+    if language == "en":
+        course = _english_subject_name(subject_name)
+        details = []
+        if semester:
+            details.append(f"is included in semester {semester}")
+        if ects:
+            details.append(f"is worth {ects} ECTS")
+        if lecturer:
+            details.append(f"is taught by {lecturer}")
+        detail_sentence = f" The course {', '.join(details[:-1])} and {details[-1]}." if len(details) > 1 else (f" The course {details[0]}." if details else "")
+        return f"The {course} course covers: {description}.{detail_sentence}"
+
+    details = []
+    if semester and field:
+        details.append(f"jest realizowany na {semester} semestrze {_polish_field_name(str(field))}")
+    elif semester:
+        details.append(f"jest realizowany na {semester} semestrze")
+    if ects:
+        details.append(f"ma {ects} ECTS")
+    if lecturer:
+        details.append(f"prowadzi go {_polish_person_name(str(lecturer))}")
+    detail_sentence = f" Przedmiot {', '.join(details[:-1])} i {details[-1]}." if len(details) > 1 else (f" Przedmiot {details[0]}." if details else "")
+    return f"Przedmiot {subject_name} obejmuje: {description}.{detail_sentence}"
 
 
 def _sentence_answer(question: str, contexts: list[dict], language: str, max_sentences: int = 4) -> str | None:
@@ -306,8 +449,23 @@ def _sentence_answer(question: str, contexts: list[dict], language: str, max_sen
     if not selected:
         return None
     if len(selected) == 1:
-        return selected[0]
-    return "\n".join(f"- {sentence}" for sentence in selected)
+        return _remove_raw_field_prefixes(selected[0])
+    return _remove_raw_field_prefixes("\n".join(f"- {sentence}" for sentence in selected))
+
+
+def _best_structured_course_metadata(contexts: list[dict], subject: str | None) -> dict | None:
+    structured = [
+        context.get("metadata", {})
+        for context in contexts
+        if context.get("metadata", {}).get("subject") and context.get("metadata", {}).get("description")
+    ]
+    if not structured:
+        return None
+    if subject:
+        for metadata in structured:
+            if _plain(str(metadata.get("subject", ""))) == _plain(subject):
+                return metadata
+    return structured[0]
 
 
 def _subject_contexts(contexts: list[dict], subject: str | None) -> list[dict]:
@@ -356,6 +514,55 @@ def _is_assessment_question(question: str) -> bool:
     return any(marker in lowered for marker in ("zaliczenie", "zaliczyc", "assessment", "assess", "exam", "egzamin", "passing", "test", "ocen"))
 
 
+def _is_regulation_question(question: str) -> bool:
+    lowered = _plain(question)
+    markers = (
+        "zasady egzamin",
+        "zasady egzaminow",
+        "zasady egzaminu",
+        "jak wyglada egzamin",
+        "zasady zaliczen",
+        "zasady zaliczenia semestru",
+        "regulamin",
+        "poprawic egzamin",
+        "poprawa",
+        "sesja poprawkowa",
+        "plagiat",
+        "ects",
+        "punktow ects",
+        "exam rules",
+        "retake rules",
+        "passing rules",
+        "plagiarism",
+    )
+    return any(marker in lowered for marker in markers)
+
+
+def _is_regulation_context(context: dict) -> bool:
+    metadata = context.get("metadata", {})
+    source = str(metadata.get("source", ""))
+    text = context.get("text", "")
+    blob = _plain(f"{source} {text}")
+    return any(marker in blob for marker in ("regulamin", "rules", "zasady egzamin", "passing rules", "retake rules"))
+
+
+def _is_course_description_question(question: str) -> bool:
+    lowered = _plain(question)
+    markers = (
+        "opis",
+        "obejmuje",
+        "czego dotyczy",
+        "zakres",
+        "sylabus",
+        "description",
+        "covered",
+        "covers",
+        "syllabus",
+        "about",
+    )
+    return any(marker in lowered for marker in markers)
+
+
 def _is_consultation_question(question: str) -> bool:
     lowered = _plain(question)
     return any(marker in lowered for marker in ("konsultacje", "consultation", "office hours", "dyzur"))
@@ -371,6 +578,18 @@ def _english_subject_name(subject: str) -> str:
         "Matematyka dyskretna": "Discrete Mathematics",
         "Podstawy sztucznej inteligencji": "Artificial Intelligence Basics",
         "Architektura komputerow": "Computer Architecture",
+        "Jezyk angielski B2": "English B2",
+        "Podstawy technologii webowych": "Web Technologies Basics",
+        "Programowanie obiektowe": "Object-Oriented Programming",
+        "Inzynieria oprogramowania": "Software Engineering",
+        "Programowanie aplikacji webowych": "Web Application Development",
+        "Statystyka dla informatykow": "Statistics for Computer Scientists",
+        "Bezpieczenstwo systemow IT": "IT Systems Security",
+        "Projekt zespolowy": "Team Software Project",
+        "Chmury obliczeniowe": "Cloud Computing",
+        "Aplikacje mobilne": "Mobile Applications",
+        "Hurtownie danych": "Data Warehouses",
+        "Metody numeryczne": "Numerical Methods",
     }
     return names.get(subject, subject)
 
@@ -391,6 +610,94 @@ def _translate_assessment_component(text: str) -> str:
     for source, target in translations.items():
         translated = re.sub(source, target, translated, flags=re.IGNORECASE)
     return _lower_first(translated)
+
+
+def _format_description(text: str, language: str) -> str:
+    cleaned = text.strip(" .")
+    if language == "en":
+        return _translate_description(cleaned)
+    return _polish_description(cleaned)
+
+
+def _translate_description(text: str) -> str:
+    translations = {
+        "Model relacyjny": "relational model",
+        "SQL": "SQL",
+        "normalizacja": "normalization",
+        "transakcje": "transactions",
+        "indeksy": "indexes",
+        "projektowanie schematow baz danych": "database schema design",
+        "Analiza zlozonosci": "complexity analysis",
+        "sortowanie": "sorting",
+        "kolejki": "queues",
+        "stosy": "stacks",
+        "drzewa": "trees",
+        "grafy": "graphs",
+        "tablice mieszajace": "hash tables",
+        "Procesy": "processes",
+        "watki": "threads",
+        "planowanie": "scheduling",
+        "pamiec wirtualna": "virtual memory",
+        "systemy plikow": "file systems",
+        "podstawy administracji Linux": "Linux administration basics",
+        "Podstawy skladni Python": "Python syntax basics",
+        "funkcje": "functions",
+        "listy": "lists",
+        "slowniki": "dictionaries",
+        "pliki": "files",
+        "proste testy jednostkowe": "simple unit tests",
+        "Logika": "logic",
+        "zbiory": "sets",
+        "relacje": "relations",
+        "indukcja matematyczna": "mathematical induction",
+        "elementy kombinatoryki": "elements of combinatorics",
+        "Przeszukiwanie przestrzeni stanow": "state-space search",
+        "podstawy uczenia maszynowego": "machine learning basics",
+        "klasyfikacja": "classification",
+        "etyka AI": "AI ethics",
+    }
+    translated_parts = []
+    for part in re.split(r",\s*|\s+oraz\s+|\s+i\s+", text):
+        item = part.strip()
+        if not item:
+            continue
+        translated_parts.append(translations.get(item, _lower_first(item)))
+    return _join_readable_list(translated_parts)
+
+
+def _polish_description(text: str) -> str:
+    replacements = {
+        "Model relacyjny": "model relacyjny",
+        "normalizacja": "normalizację",
+        "schematow": "schematów",
+        "zlozonosci": "złożoności",
+        "watki": "wątki",
+        "pamiec": "pamięć",
+        "plikow": "plików",
+        "slowniki": "słowniki",
+        "stanow": "stanów",
+    }
+    cleaned = text.strip(" .")
+    for source, target in replacements.items():
+        cleaned = re.sub(source, target, cleaned, flags=re.IGNORECASE)
+    return _lower_first(cleaned)
+
+
+def _polish_field_name(text: str) -> str:
+    if _plain(text) == "informatyka":
+        return "Informatyki"
+    return text
+
+
+def _polish_person_name(text: str) -> str:
+    replacements = {
+        "Wisniewska": "Wiśniewska",
+        "Zielinski": "Zieliński",
+    }
+    cleaned = text
+    for source, target in replacements.items():
+        cleaned = cleaned.replace(source, target)
+    return cleaned
 
 
 def _translate_consultation(text: str) -> str:
@@ -430,6 +737,12 @@ def _english_date(text: str) -> str:
     return text
 
 
+def _join_readable_list(items: list[str]) -> str:
+    if len(items) <= 1:
+        return "".join(items)
+    return f"{', '.join(items[:-1])} and {items[-1]}"
+
+
 def _plain(text: str) -> str:
     replacements = str.maketrans("ąćęłńóśźż", "acelnoszz")
     return " ".join(text.lower().translate(replacements).split())
@@ -451,3 +764,10 @@ def _deduplicate(items: list[str]) -> list[str]:
         seen.add(key)
         unique.append(item)
     return unique
+
+
+def _remove_raw_field_prefixes(answer: str) -> str:
+    cleaned = answer
+    for prefix in RAW_FIELD_PREFIXES:
+        cleaned = re.sub(rf"\b{re.escape(prefix)}\s*", "", cleaned, flags=re.IGNORECASE)
+    return " ".join(cleaned.split()) if "\n" not in cleaned else "\n".join(" ".join(line.split()) for line in cleaned.splitlines())

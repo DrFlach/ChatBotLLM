@@ -23,6 +23,18 @@ SUBJECT_ALIASES = {
         "ai",
     ),
     "Architektura komputerow": ("architektura komputerow", "computer architecture"),
+    "Jezyk angielski B2": ("jezyk angielski b2", "english b2"),
+    "Podstawy technologii webowych": ("podstawy technologii webowych", "web technologies basics", "web technologies"),
+    "Programowanie obiektowe": ("programowanie obiektowe", "object-oriented programming", "oop"),
+    "Inzynieria oprogramowania": ("inzynieria oprogramowania", "software engineering"),
+    "Programowanie aplikacji webowych": ("programowanie aplikacji webowych", "web application development", "web applications"),
+    "Statystyka dla informatykow": ("statystyka dla informatykow", "statistics for computer scientists", "statistics"),
+    "Bezpieczenstwo systemow IT": ("bezpieczenstwo systemow it", "it systems security", "security"),
+    "Projekt zespolowy": ("projekt zespolowy", "team software project", "team project"),
+    "Chmury obliczeniowe": ("chmury obliczeniowe", "cloud computing"),
+    "Aplikacje mobilne": ("aplikacje mobilne", "mobile applications", "mobile apps"),
+    "Hurtownie danych": ("hurtownie danych", "data warehouses", "data warehousing"),
+    "Metody numeryczne": ("metody numeryczne", "numerical methods"),
 }
 
 
@@ -40,6 +52,12 @@ def retrieve(question: str, top_k: int | None = None) -> list[dict]:
 
     if _is_subject_list_question(question):
         results = _merge_results(_structured_subject_results(store, question), results)
+    elif _is_regulation_question(question):
+        expanded_query = f"{question} {_regulation_query_terms(question)}"
+        results = _merge_results(
+            _regulation_results(store, question),
+            _merge_results(store.search(expanded_query, limit), results),
+        )
     else:
         subject = detect_subject(question, store.documents)
         if subject:
@@ -102,6 +120,21 @@ def _subject_results(store: VectorStore, subject: str, question: str) -> list[di
         matches.append({"text": text, "metadata": metadata, "score": 1.0 if exact_metadata_match else 0.85})
 
     return sorted(matches, key=lambda item: (0 if item["metadata"].get("subject") == subject else 1, -item["score"]))
+
+
+def _regulation_results(store: VectorStore, question: str) -> list[dict]:
+    query_terms = set(_normalize_text(_regulation_query_terms(question)).split())
+    matches: list[dict] = []
+    for document in store.documents:
+        metadata = document.get("metadata", {})
+        text = document.get("text", "")
+        source = str(metadata.get("source", ""))
+        blob = _normalize_text(f"{source} {text}")
+        if "regulamin" not in blob and "rules" not in blob:
+            continue
+        score = 0.9 + min(len(query_terms.intersection(blob.split())) * 0.02, 0.08)
+        matches.append({"text": text, "metadata": metadata, "score": score})
+    return sorted(matches, key=lambda item: -item["score"])
 
 
 def _merge_results(primary: list[dict], secondary: list[dict]) -> list[dict]:
@@ -188,6 +221,54 @@ def _is_assessment_question(question: str) -> bool:
         "ocen",
     )
     return any(marker in lowered for marker in markers)
+
+
+def _is_regulation_question(question: str) -> bool:
+    lowered = _normalize_text(question)
+    markers = (
+        "zasady egzamin",
+        "zasady egzaminow",
+        "zasady egzaminu",
+        "jak wyglada egzamin",
+        "zasady zaliczen",
+        "zasady zaliczenia semestru",
+        "regulamin",
+        "poprawic egzamin",
+        "poprawa",
+        "sesja poprawkowa",
+        "plagiat",
+        "ects",
+        "punktow ects",
+        "exam rules",
+        "retake rules",
+        "passing rules",
+        "plagiarism",
+    )
+    return any(marker in lowered for marker in markers)
+
+
+def _regulation_query_terms(question: str) -> str:
+    lowered = _normalize_text(question)
+    base_terms = [
+        "regulamin studiow",
+        "zasady egzaminow",
+        "zasady egzaminu",
+        "zasady zaliczen",
+        "warunki zaliczenia",
+        "sesja egzaminacyjna",
+        "assessment rules",
+    ]
+    if any(term in lowered for term in ("popraw", "retake")):
+        base_terms.extend(["sesja poprawkowa", "poprawa egzaminu", "retake rules"])
+    if any(term in lowered for term in ("egzamin", "exam")):
+        base_terms.extend(["exam rules", "warunki dopuszczenia do egzaminu"])
+    if any(term in lowered for term in ("zalic", "passing")):
+        base_terms.extend(["passing rules", "zasady zaliczenia semestru"])
+    if "plagiat" in lowered or "plagiarism" in lowered:
+        base_terms.extend(["plagiat", "plagiarism rules"])
+    if "ects" in lowered or "punkt" in lowered:
+        base_terms.extend(["punkty ECTS", "ECTS rules"])
+    return " ".join(base_terms)
 
 
 def _is_subject_list_question(question: str) -> bool:

@@ -131,8 +131,8 @@ def test_polish_semester_two_subject_list(monkeypatch) -> None:
     answer = generate_answer("Jakie przedmioty są na 2 semestrze?", contexts)
 
     assert "Na semestrze 2 są:" in answer
-    assert "Bazy danych (5 ECTS, prowadzacy: dr hab. Maria Wisniewska)" in answer
-    assert "Systemy operacyjne (5 ECTS, prowadzacy: dr Piotr Nowak)" in answer
+    assert "1. Bazy danych (5 ECTS, prowadzacy: dr hab. Maria Wisniewska)" in answer
+    assert "2. Systemy operacyjne (5 ECTS, prowadzacy: dr Piotr Nowak)" in answer
     assert "Wstep do programowania" not in answer
 
 
@@ -147,8 +147,8 @@ def test_english_semester_two_subject_list(monkeypatch) -> None:
     answer = generate_answer("What subjects are included in semester 2?", contexts)
 
     assert "Semester 2 includes:" in answer
-    assert "Databases (5 ECTS, lecturer: dr hab. Maria Wisniewska)" in answer
-    assert "Algorithms and Data Structures (6 ECTS, lecturer: dr Anna Kowalska)" in answer
+    assert "2. Databases (5 ECTS, lecturer: dr hab. Maria Wisniewska)" in answer
+    assert "1. Algorithms and Data Structures (6 ECTS, lecturer: dr Anna Kowalska)" in answer
     assert "Discrete Mathematics" not in answer
 
 
@@ -166,3 +166,109 @@ def test_consultation_hours_answer(monkeypatch) -> None:
 
     assert "czwartek 14:00-15:00" in answer
     assert "pokoj 301" in answer
+
+
+def test_polish_course_description_answer_is_natural(monkeypatch) -> None:
+    monkeypatch.setattr("app.rag.generator.get_settings", lambda: type("Settings", (), {"openai_api_key": None})())
+    contexts = [
+        {
+            "text": (
+                "field: Informatyka semester: 2 subject: Bazy danych ects: 5 "
+                "lecturer: dr hab. Maria Wisniewska description: Model relacyjny, SQL, "
+                "normalizacja, transakcje, indeksy i projektowanie schematow baz danych."
+            ),
+            "metadata": {
+                "field": "Informatyka",
+                "semester": "2",
+                "subject": "Bazy danych",
+                "ects": "5",
+                "lecturer": "dr hab. Maria Wisniewska",
+                "description": "Model relacyjny, SQL, normalizacja, transakcje, indeksy i projektowanie schematow baz danych.",
+            },
+            "score": 1.0,
+        }
+    ]
+
+    answer = generate_answer("Co obejmuje przedmiot Bazy danych?", contexts)
+
+    assert answer.startswith("Przedmiot Bazy danych obejmuje:")
+    assert "model relacyjny, SQL, normalizację, transakcje, indeksy" in answer
+    assert "2 semestrze Informatyki" in answer
+    assert "5 ECTS" in answer
+    assert "dr hab. Maria Wiśniewska" in answer
+
+
+def test_english_course_description_answer_is_natural(monkeypatch) -> None:
+    monkeypatch.setattr("app.rag.generator.get_settings", lambda: type("Settings", (), {"openai_api_key": None})())
+    contexts = [
+        {
+            "text": "raw csv row",
+            "metadata": {
+                "field": "Informatyka",
+                "semester": "2",
+                "subject": "Bazy danych",
+                "ects": "5",
+                "lecturer": "dr hab. Maria Wisniewska",
+                "description": "Model relacyjny, SQL, normalizacja, transakcje, indeksy i projektowanie schematow baz danych.",
+            },
+            "score": 1.0,
+        }
+    ]
+
+    answer = generate_answer("What is covered in the Databases course?", contexts)
+
+    assert answer.startswith("The Databases course covers:")
+    assert "relational model, SQL, normalization, transactions, indexes and database schema design" in answer
+    assert "semester 2" in answer
+    assert "5 ECTS" in answer
+    assert "dr hab. Maria Wisniewska" in answer
+
+
+def test_answer_does_not_contain_raw_field_prefixes(monkeypatch) -> None:
+    monkeypatch.setattr("app.rag.generator.get_settings", lambda: type("Settings", (), {"openai_api_key": None})())
+    contexts = [
+        {
+            "text": (
+                "field: Informatyka semester: 2 subject: Bazy danych ects: 5 "
+                "lecturer: dr hab. Maria Wisniewska description: Model relacyjny, SQL."
+            ),
+            "metadata": {
+                "field": "Informatyka",
+                "semester": "2",
+                "subject": "Bazy danych",
+                "ects": "5",
+                "lecturer": "dr hab. Maria Wisniewska",
+                "description": "Model relacyjny, SQL.",
+            },
+            "score": 1.0,
+        }
+    ]
+
+    answer = generate_answer("Opisz przedmiot Bazy danych", contexts)
+
+    raw_prefixes = ("field:", "semester:", "subject:", "ects:", "lecturer:", "description:", "assessment_method:", "exam_date:")
+    assert all(prefix not in answer.lower() for prefix in raw_prefixes)
+
+
+def test_databases_description_includes_lecturer_semester_and_ects(monkeypatch) -> None:
+    monkeypatch.setattr("app.rag.generator.get_settings", lambda: type("Settings", (), {"openai_api_key": None})())
+    contexts = [
+        {
+            "text": "structured row",
+            "metadata": {
+                "field": "Informatyka",
+                "semester": "2",
+                "subject": "Bazy danych",
+                "ects": "5",
+                "lecturer": "dr hab. Maria Wisniewska",
+                "description": "Model relacyjny, SQL.",
+            },
+            "score": 1.0,
+        }
+    ]
+
+    answer = generate_answer("Co obejmuje przedmiot Bazy danych?", contexts)
+
+    assert "2 semestrze" in answer
+    assert "5 ECTS" in answer
+    assert "dr hab. Maria Wiśniewska" in answer

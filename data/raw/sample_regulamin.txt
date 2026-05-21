@@ -1,12 +1,38 @@
-Regulamin studiow i zasady zaliczania
+Regulamin studiow i zasady zaliczania - Informatyka
 
-Student zalicza semestr, jezeli uzyska wszystkie wymagane zaliczenia oraz liczbe punktow ECTS przypisana do semestru.
-Nieobecnosc na laboratoriach powyzej 20% godzin moze skutkowac brakiem zaliczenia, chyba ze prowadzacy wyznaczy dodatkowe zadania.
-Warunkiem podejscia do egzaminu jest spelnienie wymagan opisanych w sylabusie przedmiotu.
-Ocena koncowa moze skladac sie z laboratoriow, projektu, kolokwium, odpowiedzi ustnej i egzaminu.
-Poprawa egzaminu odbywa sie w sesji poprawkowej. Student ma prawo do jednego terminu poprawkowego.
-Prace projektowe musza byc oddane w terminie wskazanym przez prowadzacego. Spoznienie moze obnizyc ocene.
-Plagiat lub niesamodzielne wykonanie pracy skutkuje ocena niedostateczna z danego elementu.
+Zasady zaliczeń:
+Zasady zaliczenia semestru:
+Student zalicza semestr, jezeli uzyska wszystkie wymagane zaliczenia z przedmiotow objetych planem studiow oraz liczbe punktow ECTS przypisana do semestru. Kazdy przedmiot ma w sylabusie opisane elementy oceny, progi punktowe i wymagania dopuszczajace do egzaminu. Brak zaliczenia jednego przedmiotu moze skutkowac wpisem warunkowym, jezeli decyzje zaakceptuje dziekan.
+
+Zasady egzaminow:
+Warunkiem podejscia do egzaminu jest spelnienie wymagan opisanych w sylabusie przedmiotu, w tym oddanie projektow, zaliczenie laboratoriow albo uzyskanie minimalnej liczby punktow z cwiczen. Egzamin moze miec forme pisemna, praktyczna, ustna albo mieszana. Student musi okazac dokument tozsamosci podczas egzaminu. Wyniki egzaminow sa publikowane w systemie uczelnianym nie pozniej niz 7 dni roboczych po terminie.
+
+Plagiat:
+Zasady dotyczace plagiatu:
+Plagiat, niesamodzielne wykonanie projektu, nieuprawnione uzycie cudzego kodu albo udostepnienie wlasnego rozwiazania innym studentom skutkuje ocena niedostateczna z danego elementu. Prowadzacy moze skierowac sprawe do komisji dyscyplinarnej. Dozwolone jest korzystanie z dokumentacji technicznej, jezeli zrodla zostana wskazane w raporcie lub komentarzach projektu.
+
+Punkty ECTS:
+Zasady ECTS:
+Punkty ECTS okreslaja naklad pracy studenta. Jeden punkt ECTS odpowiada srednio 25-30 godzinom pracy. Punkty sa przyznawane dopiero po zaliczeniu wszystkich wymaganych elementow przedmiotu. Student powinien uzyskac pelna pule punktow przypisana do semestru, aby przejsc na kolejny etap studiow bez warunku.
+
+Zasady nieobecnosci:
+Nieobecnosc na laboratoriach, cwiczeniach albo projektach powyzej 20% godzin moze skutkowac brakiem zaliczenia, chyba ze prowadzacy wyznaczy dodatkowe zadania uzupelniajace. Nieobecnosc usprawiedliwiona powinna zostac zgloszona prowadzacemu nie pozniej niz 7 dni od powrotu na zajecia. Zajecia projektowe wymagaja aktywnego udzialu w pracy zespolu.
+
+Zasady poprawy egzaminu:
+Zasady poprawek:
+Student ma prawo do jednego terminu poprawkowego z egzaminu w sesji poprawkowej. Poprawa zaliczenia projektu, laboratorium albo kolokwium zalezy od zasad okreslonych w sylabusie. Ocena z poprawy zastępuje ocene niedostateczna, ale prowadzacy moze uwzglednic opoznienia lub braki formalne opisane w kryteriach zaliczenia.
 
 Passing rules in English:
-A student passes a semester after completing all required courses and ECTS points. Course assessment rules are defined in each syllabus. Exam retake is available during the retake session.
+A student passes a semester after completing all required courses and earning the ECTS points assigned to that semester. Each syllabus defines assessment components, thresholds and admission requirements for exams.
+
+Exam rules in English:
+The student may take an exam after completing the requirements stated in the syllabus. Exams may be written, practical, oral or mixed. Results are published in the university system within 7 working days.
+
+Plagiarism rules in English:
+Plagiarism, unauthorized code reuse or submitting work prepared by another person results in a failing grade for the assessment component and may be reported to a disciplinary committee.
+
+ECTS rules in English:
+ECTS points represent student workload. One ECTS point corresponds to about 25-30 hours of work and is awarded only after all course requirements are completed.
+
+Absence and retake rules in English:
+Absence from more than 20% of required laboratory, class or project hours may prevent course completion. A student has one retake exam opportunity during the retake session.

@@ -156,6 +156,59 @@ def test_rag_answer_still_returns_sources(monkeypatch) -> None:
     assert response.sources[0].file_name == "sample_sylabusy.csv"
 
 
+def regulation_contexts() -> list[dict]:
+    return [
+        {
+            "text": (
+                "Zasady egzaminow: Warunkiem podejscia do egzaminu jest spelnienie wymagan "
+                "opisanych w sylabusie. Egzamin moze miec forme pisemna, praktyczna, ustna albo mieszana. "
+                "Zasady poprawek: Student ma prawo do jednego terminu poprawkowego z egzaminu w sesji poprawkowej. "
+                "Zasady zaliczen: Student zalicza semestr, jezeli uzyska wszystkie wymagane zaliczenia."
+            ),
+            "metadata": {"source": "sample_regulamin.txt", "document_type": "txt", "chunk_id": 0},
+            "score": 0.95,
+        }
+    ]
+
+
+@pytest.mark.parametrize(
+    ("question", "expected"),
+    [
+        ("Jakie są zasady egzaminów?", "Zasady egzaminów są następujące:"),
+        ("Czy można poprawić egzamin?", "Zasady poprawy egzaminu są następujące:"),
+        ("Jakie są zasady zaliczeń?", "Zasady zaliczeń są następujące:"),
+    ],
+)
+def test_polish_regulation_questions_use_rag(monkeypatch, question: str, expected: str) -> None:
+    monkeypatch.setattr(routes, "retrieve", lambda question: regulation_contexts())
+
+    response = chat(ChatRequest(question=question))
+
+    assert response.intent == "study_program"
+    assert response.sources
+    assert response.sources[0].file_name == "sample_regulamin.txt"
+    assert expected in response.answer
+    assert "Nie znalazłem tej informacji" not in response.answer
+
+
+@pytest.mark.parametrize(
+    ("question", "expected"),
+    [
+        ("What are the exam rules?", "The exam rules are:"),
+        ("What are the retake rules?", "The retake rules are:"),
+    ],
+)
+def test_english_regulation_questions_still_work(monkeypatch, question: str, expected: str) -> None:
+    monkeypatch.setattr(routes, "retrieve", lambda question: regulation_contexts())
+
+    response = chat(ChatRequest(question=question))
+
+    assert response.intent == "study_program"
+    assert response.sources
+    assert expected in response.answer
+    assert "I could not find this information" not in response.answer
+
+
 def test_health_endpoint(monkeypatch) -> None:
     monkeypatch.setattr(routes, "index_exists", lambda index_dir: True)
 

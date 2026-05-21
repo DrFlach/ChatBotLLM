@@ -360,20 +360,57 @@ pytest
 
 Testy jednostkowe sprawdzaja m.in. dzielenie tekstu, dzialanie bazy wektorowej oraz fallback generatora odpowiedzi.
 
-## Deploy na Render
+## Uruchomienie przez Docker
 
-Zalecane ustawienia uslugi Render:
+Projekt mozna uruchomic bez lokalnego instalowania zaleznosci Pythona, korzystajac z Dockera. Obraz buduje indeks FAISS podczas `docker build`, a kontener startuje aplikacje przez `start.sh`.
 
-- Root Directory: zostaw puste, jezeli projekt znajduje sie w katalogu glownym repozytorium
-- Build Command: `pip install -r requirements.txt && python scripts/ingest_documents.py`
-- Start Command: `bash start.sh`
+### Docker
 
-Indeks FAISS jest budowany podczas kroku build, dzieki czemu aplikacja nie traci czasu na dluga ingestie przed otwarciem portu HTTP. Plik `start.sh` tylko sprawdza, czy istnieje `data/index/faiss.index`, a jezeli indeksu brakuje, probuje go odbudowac awaryjnie.
-
-Na Render serwer musi nasluchiwac na `0.0.0.0` i uzywac zmiennej srodowiskowej `PORT`. Skrypt startowy uruchamia aplikacje poleceniem:
+Zbuduj obraz:
 
 ```bash
-exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+docker build -t chatbot-rag .
+```
+
+Uruchom kontener:
+
+```bash
+docker run --rm -p 8000:8000 chatbot-rag
+```
+
+Aplikacja bedzie dostepna pod adresem:
+
+```text
+http://127.0.0.1:8000
+```
+
+Dokumentacja API:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+### Docker Compose
+
+Alternatywnie mozna uzyc Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+Jezeli chcesz uzyc OpenAI API, ustaw zmienna srodowiskowa przed uruchomieniem:
+
+```bash
+OPENAI_API_KEY=your_api_key_here docker compose up --build
+```
+
+Klucz OpenAI API nie jest wymagany. Bez niego projekt dziala w trybie fallback, korzystajac z lokalnego generatora odpowiedzi opartego na znalezionych dokumentach.
+
+Po zmianie plikow w `data/raw` nalezy przebudowac obraz, aby odtworzyc indeks FAISS:
+
+```bash
+docker compose build --no-cache
+docker compose up
 ```
 
 Klucz OpenAI API nie jest wymagany do wdrozenia, poniewaz projekt dziala rowniez w trybie fallback bez OpenAI API. Pliki zrodlowe bazy wiedzy w `data/raw` powinny byc commitowane do repozytorium. Katalog `data/index` jest ignorowany w `.gitignore` poza plikiem `.gitkeep`, dlatego na Render indeks jest odtwarzany przez Build Command.

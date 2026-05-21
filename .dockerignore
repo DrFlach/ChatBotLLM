@@ -1,0 +1,14 @@
+.git
+.gitignore
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.venv
+venv
+__pycache__
+*.pyc
+*.pyo
+.env
+data/index/*
+!data/index/.gitkeep
+docs/screenshots

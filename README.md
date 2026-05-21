@@ -413,6 +413,22 @@ docker compose build --no-cache
 docker compose up
 ```
 
+## Deploy na Render
+
+Ustawienia uslugi Render:
+
+- Root Directory: zostaw puste, jezeli projekt znajduje sie w katalogu glownym repozytorium
+- Build Command: `bash render-build.sh`
+- Start Command: `bash start.sh`
+
+Indeks FAISS jest budowany podczas Render Build Command w skrypcie `render-build.sh`. Skrypt `start.sh` nie buduje indeksu, nie instaluje zaleznosci i nie uruchamia testow; jego zadaniem jest szybkie uruchomienie serwera FastAPI.
+
+Serwer musi nasluchiwac na `0.0.0.0` i korzystac ze zmiennej srodowiskowej Render `PORT`. Skrypt startowy uruchamia aplikacje poleceniem:
+
+```bash
+exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+```
+
 Klucz OpenAI API nie jest wymagany do wdrozenia, poniewaz projekt dziala rowniez w trybie fallback bez OpenAI API. Pliki zrodlowe bazy wiedzy w `data/raw` powinny byc commitowane do repozytorium. Katalog `data/index` jest ignorowany w `.gitignore` poza plikiem `.gitkeep`, dlatego na Render indeks jest odtwarzany przez Build Command.
 
 ## Rozszerzanie bazy wiedzy

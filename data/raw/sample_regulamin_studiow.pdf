@@ -12,38 +12,46 @@ endobj
 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
 5 0 obj
-<< /Length 1267 >>
+<< /Length 1712 >>
 stream
 BT
-/F1 11 Tf
-50 780 Td
+/F1 10 Tf
+50 790 Td
 (Study Regulations Summary - Computer Science) Tj
-0 -16 Td
+0 -14 Td
 () Tj
-0 -16 Td
+0 -14 Td
 (Passing rules: a semester is passed after completing all required courses and earning assigned ECTS points.) Tj
-0 -16 Td
+0 -14 Td
 (Exam rules: exams may be written, practical, oral or mixed; syllabus requirements must be completed before the exam.) Tj
-0 -16 Td
+0 -14 Td
 (Retake rules: each student has one retake exam opportunity in the retake session.) Tj
-0 -16 Td
+0 -14 Td
 (Plagiarism rules: plagiarism or unauthorized code reuse results in a failing grade and may be reported.) Tj
-0 -16 Td
+0 -14 Td
 (ECTS rules: one ECTS point corresponds to about 25-30 hours of student work.) Tj
-0 -16 Td
+0 -14 Td
 (Absence rules: absence above 20 percent of required classes may prevent course completion.) Tj
-0 -16 Td
+0 -14 Td
+(Diploma thesis rules: the engineering thesis in semester 7 includes analysis, implementation, tests and documentation.) Tj
+0 -14 Td
+(Internship rules: internship lasts 160 hours in semester 6 and requires a report plus company supervisor opinion.) Tj
+0 -14 Td
 () Tj
-0 -16 Td
+0 -14 Td
 (Zasady egzaminow: warunki dopuszczenia okresla sylabus, a egzamin moze byc pisemny, praktyczny, ustny albo mieszany.) Tj
-0 -16 Td
+0 -14 Td
 (Zasady zaliczen: student zalicza semestr po uzyskaniu wymaganych zaliczen i punktow ECTS.) Tj
-0 -16 Td
+0 -14 Td
 (Zasady poprawy egzaminu: student ma jeden termin poprawkowy w sesji poprawkowej.) Tj
-0 -16 Td
+0 -14 Td
 (Punkty ECTS: punkty okreslaja naklad pracy studenta.) Tj
-0 -16 Td
+0 -14 Td
 (Plagiat: plagiat skutkuje ocena niedostateczna i mozliwym postepowaniem dyscyplinarnym.) Tj
+0 -14 Td
+(Praca inzynierska: obejmuje projekt, implementacje, testy, dokumentacje i obrone.) Tj
+0 -14 Td
+(Praktyka zawodowa: trwa 160 godzin i wymaga raportu oraz opinii opiekuna.) Tj
 ET
 endstream
 endobj
@@ -58,5 +66,5 @@ xref
 trailer
 << /Size 6 /Root 1 0 R >>
 startxref
-1630
+2075
 %%EOF

@@ -1,56 +1,54 @@
 Program studiow: Informatyka, studia pierwszego stopnia
 Field of study: Computer Science
-Rok akademicki: 2025/2026
+Rok akademicki: 2025/2026-2027/2028
 
 Semestr 1:
-- Wstep do programowania / Introduction to Programming, 30 godzin wykladu, 30 godzin laboratorium, 6 ECTS. Prowadzacy: dr Anna Kowalska.
-- Matematyka dyskretna / Discrete Mathematics, 30 godzin wykladu, 15 godzin cwiczen, 5 ECTS. Prowadzacy: dr Piotr Nowak.
-- Architektura komputerow / Computer Architecture, 20 godzin wykladu, 20 godzin laboratorium, 4 ECTS. Prowadzacy: mgr Tomasz Zielinski.
-- Jezyk angielski B2 / English B2, 30 godzin cwiczen, 2 ECTS. Prowadzacy: mgr Ewa Malinowska.
-- Podstawy technologii webowych / Web Technologies Basics, 15 godzin wykladu, 30 godzin laboratorium, 4 ECTS. Prowadzacy: dr Lukasz Mazur.
+- Wstep do programowania / Introduction to Programming, 6 ECTS. Prowadzacy: dr Anna Kowalska.
+- Matematyka dyskretna / Discrete Mathematics, 5 ECTS. Prowadzacy: dr Piotr Nowak.
+- Architektura komputerow / Computer Architecture, 4 ECTS. Prowadzacy: mgr Tomasz Zielinski.
+- Jezyk angielski B2 / English B2, 2 ECTS. Prowadzacy: mgr Ewa Malinowska.
+- Technologie internetowe / Web Technologies, 4 ECTS. Prowadzacy: dr Lukasz Mazur.
 
 Semestr 2:
-- Algorytmy i struktury danych / Algorithms and Data Structures, 30 godzin wykladu, 30 godzin laboratorium, 6 ECTS. Prowadzacy: dr Anna Kowalska.
-- Bazy danych / Databases, 30 godzin wykladu, 30 godzin laboratorium, 5 ECTS. Prowadzacy: dr hab. Maria Wisniewska.
-- Systemy operacyjne / Operating Systems, 30 godzin wykladu, 20 godzin laboratorium, 5 ECTS. Prowadzacy: dr Piotr Nowak.
-- Podstawy sztucznej inteligencji / Artificial Intelligence Basics, 20 godzin wykladu, 20 godzin projektu, 4 ECTS. Prowadzacy: dr hab. Maria Wisniewska.
-- Programowanie obiektowe / Object-Oriented Programming, 20 godzin wykladu, 30 godzin laboratorium, 5 ECTS. Prowadzacy: dr Lukasz Mazur.
+- Algorytmy i struktury danych / Algorithms and Data Structures, 6 ECTS. Prowadzacy: dr Anna Kowalska.
+- Bazy danych / Databases, 5 ECTS. Prowadzacy: dr hab. Maria Wisniewska.
+- Systemy operacyjne / Operating Systems, 5 ECTS. Prowadzacy: dr Piotr Nowak.
+- Programowanie obiektowe / Object-Oriented Programming, 5 ECTS. Prowadzacy: dr Lukasz Mazur.
+- Podstawy elektroniki / Electronics Basics, 3 ECTS. Prowadzacy: dr Marek Lewandowski.
 
 Semestr 3:
-- Sieci komputerowe / Computer Networks, 30 godzin wykladu, 30 godzin laboratorium, 5 ECTS. Prowadzacy: dr Pawel Kaczmarek.
-- Inzynieria oprogramowania / Software Engineering, 30 godzin wykladu, 30 godzin projektu, 5 ECTS. Prowadzacy: dr Katarzyna Wrobel.
-- Programowanie aplikacji webowych / Web Application Development, 20 godzin wykladu, 40 godzin laboratorium, 5 ECTS. Prowadzacy: dr Lukasz Mazur.
-- Statystyka dla informatykow / Statistics for Computer Scientists, 30 godzin wykladu, 15 godzin cwiczen, 4 ECTS. Prowadzacy: dr Piotr Nowak.
-- Bezpieczenstwo systemow IT / IT Systems Security, 20 godzin wykladu, 20 godzin laboratorium, 4 ECTS. Prowadzacy: dr Pawel Kaczmarek.
+- Sieci komputerowe / Computer Networks, 5 ECTS. Prowadzacy: dr Pawel Kaczmarek.
+- Inzynieria oprogramowania / Software Engineering, 5 ECTS. Prowadzacy: dr Katarzyna Wrobel.
+- Programowanie aplikacji webowych / Web Application Development, 5 ECTS. Prowadzacy: dr Lukasz Mazur.
+- Statystyka dla informatykow / Statistics for Computer Scientists, 4 ECTS. Prowadzacy: dr Piotr Nowak.
+- Bezpieczenstwo systemow / System Security, 4 ECTS. Prowadzacy: dr Pawel Kaczmarek.
 
 Semestr 4:
-- Projekt zespolowy / Team Software Project, 15 godzin seminarium, 45 godzin projektu, 6 ECTS. Prowadzacy: dr Katarzyna Wrobel.
-- Chmury obliczeniowe / Cloud Computing, 20 godzin wykladu, 20 godzin laboratorium, 4 ECTS. Prowadzacy: dr Pawel Kaczmarek.
-- Aplikacje mobilne / Mobile Applications, 20 godzin wykladu, 30 godzin laboratorium, 4 ECTS. Prowadzacy: mgr Ewa Malinowska.
-- Hurtownie danych / Data Warehouses, 30 godzin wykladu, 30 godzin laboratorium, 5 ECTS. Prowadzacy: dr hab. Maria Wisniewska.
-- Metody numeryczne / Numerical Methods, 30 godzin wykladu, 15 godzin laboratorium, 4 ECTS. Prowadzacy: dr Piotr Nowak.
+- Projekt zespolowy / Team Project, 6 ECTS. Prowadzacy: dr Katarzyna Wrobel.
+- Chmura obliczeniowa / Cloud Computing, 4 ECTS. Prowadzacy: dr Pawel Kaczmarek.
+- Aplikacje mobilne / Mobile Applications, 4 ECTS. Prowadzacy: mgr Ewa Malinowska.
+- Hurtownie danych / Data Warehouses, 5 ECTS. Prowadzacy: dr hab. Maria Wisniewska.
+- Metody numeryczne / Numerical Methods, 4 ECTS. Prowadzacy: dr Piotr Nowak.
 
-Terminy ocen i egzaminow:
-- Wstep do programowania: projekt koncowy do 15 czerwca 2026, egzamin praktyczny 22 czerwca 2026.
-- Matematyka dyskretna: kolokwium 10 maja 2026, egzamin 18 czerwca 2026.
-- Architektura komputerow: test koncowy 16 czerwca 2026.
-- Jezyk angielski B2: test jezykowy 12 czerwca 2026.
-- Podstawy technologii webowych: projekt strony i test 19 czerwca 2026.
-- Algorytmy i struktury danych: projekt do 12 czerwca 2026, egzamin 25 czerwca 2026.
-- Bazy danych: test SQL 5 czerwca 2026, projekt zespolowy do 20 czerwca 2026.
-- Systemy operacyjne: egzamin 24 czerwca 2026.
-- Podstawy sztucznej inteligencji: projekt i test koncowy 17 czerwca 2026.
-- Programowanie obiektowe: egzamin praktyczny 26 czerwca 2026.
-- Sieci komputerowe: egzamin 20 czerwca 2026.
-- Inzynieria oprogramowania: egzamin 23 czerwca 2026.
-- Programowanie aplikacji webowych: obrona projektu 27 czerwca 2026.
-- Statystyka dla informatykow: egzamin 21 czerwca 2026.
-- Bezpieczenstwo systemow IT: test 28 czerwca 2026.
-- Projekt zespolowy: prezentacja projektu 30 czerwca 2026.
-- Chmury obliczeniowe: test i projekt wdrozeniowy 18 czerwca 2026.
-- Aplikacje mobilne: prezentacja projektu 24 czerwca 2026.
-- Hurtownie danych: egzamin 25 czerwca 2026.
-- Metody numeryczne: egzamin 22 czerwca 2026.
+Semestr 5:
+- Sztuczna inteligencja / Artificial Intelligence, 5 ECTS. Prowadzacy: dr hab. Maria Wisniewska.
+- Uczenie maszynowe / Machine Learning, 5 ECTS. Prowadzacy: dr Natalia Grabowska.
+- Grafika komputerowa / Computer Graphics, 4 ECTS. Prowadzacy: dr Marek Lewandowski.
+- Administracja systemami / System Administration, 4 ECTS. Prowadzacy: dr Pawel Kaczmarek.
+
+Semestr 6:
+- DevOps i CI/CD / DevOps and CI/CD, 5 ECTS. Prowadzacy: dr Lukasz Mazur.
+- Praktyka zawodowa / Internship, 6 ECTS. Prowadzacy: mgr Ewa Malinowska.
+- Analiza danych / Data Analysis, 4 ECTS. Prowadzacy: dr Natalia Grabowska.
+- Projektowanie interfejsow / User Interface Design, 4 ECTS. Prowadzacy: mgr Ewa Malinowska.
+
+Semestr 7:
+- Seminarium dyplomowe / Diploma Seminar, 4 ECTS. Prowadzacy: dr Katarzyna Wrobel.
+- Praca inzynierska / Engineering Thesis, 10 ECTS. Prowadzacy: dr Katarzyna Wrobel.
+- Etyka i prawo w IT / Ethics and Law in IT, 3 ECTS. Prowadzacy: dr Marek Lewandowski.
+
+Informacje ogolne:
+Program Informatyka obejmuje 7 semestrow i prowadzi od podstaw programowania, matematyki i architektury komputerow do zaawansowanych zagadnien takich jak chmura obliczeniowa, DevOps, sztuczna inteligencja, uczenie maszynowe, praktyka zawodowa oraz praca inzynierska.
 
 English summary:
-The Computer Science undergraduate program covers programming, mathematics, computer architecture, algorithms, databases, operating systems, artificial intelligence, networks, software engineering, web applications, security, cloud computing, mobile applications, data warehouses and numerical methods. Students may ask about semesters, subjects, ECTS, hours, exams, assessment dates, lecturers and consultation hours.
+The Computer Science undergraduate program covers 7 semesters. It includes programming, discrete mathematics, computer architecture, databases, algorithms, operating systems, networks, software engineering, web technologies, system security, cloud computing, DevOps, artificial intelligence, machine learning, internship, diploma seminar and engineering thesis.

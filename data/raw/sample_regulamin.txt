@@ -22,6 +22,12 @@ Zasady poprawy egzaminu:
 Zasady poprawek:
 Student ma prawo do jednego terminu poprawkowego z egzaminu w sesji poprawkowej. Poprawa zaliczenia projektu, laboratorium albo kolokwium zalezy od zasad okreslonych w sylabusie. Ocena z poprawy zastępuje ocene niedostateczna, ale prowadzacy moze uwzglednic opoznienia lub braki formalne opisane w kryteriach zaliczenia.
 
+Zasady pracy dyplomowej:
+Student wybiera temat pracy inzynierskiej najpozniej na poczatku 7 semestru. Praca inzynierska musi zawierac opis problemu, projekt rozwiazania, implementacje lub prototyp, testy oraz dokumentacje techniczna. Warunkiem dopuszczenia do obrony jest zaliczenie seminarium dyplomowego, oddanie zaakceptowanej pracy i uzyskanie wszystkich wymaganych punktow ECTS.
+
+Zasady praktyki zawodowej:
+Praktyka zawodowa trwa 160 godzin i jest realizowana w semestrze 6. Student sklada raport z praktyki oraz opinie opiekuna z firmy. Zadania praktyki powinny byc zwiazane z programowaniem, administracja systemami, analiza danych, testowaniem, wsparciem IT albo innymi zadaniami informatycznymi. Zaliczenie praktyki jest wymagane do ukonczenia studiow.
+
 Passing rules in English:
 A student passes a semester after completing all required courses and earning the ECTS points assigned to that semester. Each syllabus defines assessment components, thresholds and admission requirements for exams.
 
@@ -36,3 +42,9 @@ ECTS points represent student workload. One ECTS point corresponds to about 25-3
 
 Absence and retake rules in English:
 Absence from more than 20% of required laboratory, class or project hours may prevent course completion. A student has one retake exam opportunity during the retake session.
+
+Diploma thesis rules in English:
+The engineering thesis is completed in semester 7 and must include problem analysis, solution design, implementation or prototype, tests and technical documentation. A student may defend the thesis after completing the diploma seminar and all required ECTS points.
+
+Internship rules in English:
+The internship lasts 160 hours in semester 6. A student submits an internship report and company supervisor opinion. Internship tasks should be related to IT work such as programming, system administration, data analysis, testing or support.

@@ -108,6 +108,9 @@ _STUDY_TERMS = {
     "poprawkowa",
     "sesja poprawkowa",
     "plagiat",
+    "obrona",
+    "defense",
+    "thesis",
     "wykladowca",
     "wykladowcy",
     "wykladowc",
@@ -204,7 +207,7 @@ def _study_intent(normalized: str) -> str | None:
         return "exam_rules"
     if _has_any(normalized, ("konsultacje", "dyzur", "office hours", "consultation")):
         return "consultation"
-    if _has_any(normalized, ("kiedy", "termin", "when", "date", "scheduled")) and _has_any(normalized, ("egzamin", "test", "exam")):
+    if _has_any(normalized, ("kiedy", "termin", "when", "date", "scheduled")) and _has_any(normalized, ("egzamin", "test", "exam", "obrona", "defense")):
         return "exam_date"
     if _has_any(normalized, ("zaliczenie", "zaliczen", "ocena", "oceniany", "wymagania zaliczeniowe", "assessment", "assessed", "grading")):
         return "assessment"

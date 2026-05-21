@@ -587,7 +587,7 @@ def _is_teacher_question(question: str) -> bool:
 def _is_exam_date_question(question: str) -> bool:
     lowered = _plain(question)
     date_markers = ("kiedy", "termin", "when", "date", "scheduled")
-    exam_markers = ("egzamin", "test", "exam")
+    exam_markers = ("egzamin", "test", "exam", "obrona", "defense")
     return any(marker in lowered for marker in date_markers) and any(marker in lowered for marker in exam_markers)
 
 
@@ -659,20 +659,31 @@ def _english_subject_name(subject: str) -> str:
         "Sieci komputerowe": "Computer Networks",
         "Wstep do programowania": "Introduction to Programming",
         "Matematyka dyskretna": "Discrete Mathematics",
-        "Podstawy sztucznej inteligencji": "Artificial Intelligence Basics",
+        "Sztuczna inteligencja": "Artificial Intelligence",
         "Architektura komputerow": "Computer Architecture",
         "Jezyk angielski B2": "English B2",
-        "Podstawy technologii webowych": "Web Technologies Basics",
+        "Technologie internetowe": "Web Technologies",
         "Programowanie obiektowe": "Object-Oriented Programming",
         "Inzynieria oprogramowania": "Software Engineering",
         "Programowanie aplikacji webowych": "Web Application Development",
         "Statystyka dla informatykow": "Statistics for Computer Scientists",
-        "Bezpieczenstwo systemow IT": "IT Systems Security",
-        "Projekt zespolowy": "Team Software Project",
-        "Chmury obliczeniowe": "Cloud Computing",
+        "Bezpieczenstwo systemow": "System Security",
+        "Projekt zespolowy": "Team Project",
+        "Chmura obliczeniowa": "Cloud Computing",
         "Aplikacje mobilne": "Mobile Applications",
         "Hurtownie danych": "Data Warehouses",
         "Metody numeryczne": "Numerical Methods",
+        "Podstawy elektroniki": "Electronics Basics",
+        "Uczenie maszynowe": "Machine Learning",
+        "Grafika komputerowa": "Computer Graphics",
+        "Administracja systemami": "System Administration",
+        "DevOps i CI/CD": "DevOps and CI/CD",
+        "Praktyka zawodowa": "Internship",
+        "Analiza danych": "Data Analysis",
+        "Projektowanie interfejsow": "User Interface Design",
+        "Seminarium dyplomowe": "Diploma Seminar",
+        "Praca inzynierska": "Engineering Thesis",
+        "Etyka i prawo w IT": "Ethics and Law in IT",
     }
     return names.get(subject, subject)
 

@@ -37,6 +37,22 @@ Tradycyjne wyszukiwanie po slowach kluczowych moze nie znalezc odpowiedzi, jezel
 - **HTML, CSS, JavaScript** - prosty interfejs webowy.
 - **pytest** - testy jednostkowe.
 
+## Przykladowa baza wiedzy
+
+Projekt zawiera realistyczna przykladowa baze wiedzy dla kierunku Informatyka obejmujaca 7 semestrow studiow. Dane w katalogu `data/raw` opisuja 31 przedmiotow, harmonogram egzaminow i zaliczen, konsultacje 10 prowadzacych oraz regulamin studiow.
+
+Przykladowe dokumenty sa zapisane w kilku formatach:
+
+- `sample_sylabusy.csv` - przedmioty, angielskie nazwy, ECTS, godziny, opisy, tematy sylabusow, prowadzacy i metody zaliczenia,
+- `sample_terminy_egzaminow.csv` - daty egzaminow i koncowych zaliczen,
+- `sample_konsultacje.html` - konsultacje prowadzacych,
+- `sample_program_studiow.txt` - opis programu studiow na semestry 1-7,
+- `sample_regulamin.txt` oraz `sample_regulamin_studiow.pdf` - zasady zaliczen, egzaminow, poprawek, ECTS, nieobecnosci, plagiatu, praktyk i pracy inzynierskiej.
+
+Ta baza wiedzy jest sztuczna, ale spojna wewnetrznie i przygotowana tak, aby projekt wygladal jak kompletny program studiow podczas prezentacji uczelnianej.
+
+Po ostatniej ingestii baza FAISS zawiera 97 fragmentow utworzonych z 75 rekordow dokumentow. Projekt ma 71 testow automatycznych i dziala rowniez bez `OPENAI_API_KEY`, korzystajac wtedy z lokalnego fallback generatora odpowiedzi opartego na znalezionym kontekście.
+
 ## Architektura systemu
 
 System sklada sie z kilku warstw:
@@ -157,7 +173,7 @@ Przykladowa odpowiedz:
   "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
   "vector_database": "FAISS",
   "openai_configured": false,
-  "indexed_chunks": 20
+  "indexed_chunks": 97
 }
 ```
 
@@ -203,16 +219,31 @@ Przyklady pytan po polsku:
 
 - Jakie przedmioty sa na Informatyce w semestrze 1?
 - Jakie przedmioty sa na Informatyce w semestrze 2?
+- Jakie przedmioty sa na Informatyce w semestrze 3?
+- Jakie przedmioty sa na Informatyce w semestrze 4?
+- Jakie przedmioty sa na Informatyce w semestrze 5?
+- Jakie przedmioty sa na Informatyce w semestrze 6?
+- Jakie przedmioty sa na Informatyce w semestrze 7?
 - Kiedy jest egzamin z Algorytmow i struktur danych?
 - Jakie sa konsultacje dr Anny Kowalskiej?
 - Jak wyglada zaliczenie przedmiotu Bazy danych?
-- Kto prowadzi Podstawy sztucznej inteligencji?
+- Kto prowadzi Uczenie maszynowe?
+- Co obejmuje DevOps i CI/CD?
+- Jak wyglada zaliczenie Chmury obliczeniowej?
+- Kiedy jest obrona Pracy inzynierskiej?
 - Jakie sa zasady zaliczenia semestru?
 
 Przyklady pytan po angielsku:
 
 - What courses are included in semester 2 of Computer Science?
+- What subjects are included in semester 5?
+- What subjects are included in semester 6?
+- What subjects are included in semester 7?
 - Who teaches Databases?
+- Who teaches Machine Learning?
+- What is covered in Cloud Computing?
+- How is DevOps and CI/CD assessed?
+- When is the Engineering Thesis defense?
 - What are the passing rules for a semester?
 - When is the Algorithms and Data Structures exam?
 - What are the consultation hours for Anna Kowalska?
@@ -239,7 +270,7 @@ Proponowane zrzuty ekranu:
 
 ## Ograniczenia
 
-- Projekt jest prototypem MVP i korzysta z niewielkiego zestawu przykladowych dokumentow.
+- Projekt jest prototypem MVP i korzysta z realistycznego, ale przykladowego zestawu dokumentow dla 7 semestrow Informatyki.
 - Jakosc odpowiedzi zalezy od jakosci oraz kompletności dokumentow w katalogu `data/raw`.
 - Fallback bez OpenAI API nie generuje pelnych odpowiedzi tak dobrze jak model LLM; wybiera najtrafniejsze fragmenty tekstu.
 - Pierwsze uruchomienie ingestii moze wymagac dostepu do internetu, aby pobrac model embeddingowy.
@@ -329,7 +360,9 @@ pytest
 
 Testy jednostkowe sprawdzaja m.in. dzielenie tekstu, dzialanie bazy wektorowej oraz fallback generatora odpowiedzi.
 
-## Dodawanie nowych dokumentów
+## Rozszerzanie bazy wiedzy
+
+Baze wiedzy mozna rozszerzac bez zmian w kodzie aplikacji. Wystarczy dodac nowe pliki do katalogu `data/raw` i ponownie zbudowac indeks FAISS.
 
 Aby dodac nowe dokumenty do bazy wiedzy:
 

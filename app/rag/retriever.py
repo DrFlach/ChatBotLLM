@@ -17,24 +17,31 @@ SUBJECT_ALIASES = {
     "Sieci komputerowe": ("sieci komputerowe", "computer networks"),
     "Wstep do programowania": ("wstep do programowania", "introduction to programming", "programming"),
     "Matematyka dyskretna": ("matematyka dyskretna", "discrete mathematics"),
-    "Podstawy sztucznej inteligencji": (
-        "podstawy sztucznej inteligencji",
-        "artificial intelligence",
-        "ai",
-    ),
+    "Sztuczna inteligencja": ("sztuczna inteligencja", "artificial intelligence", "ai"),
     "Architektura komputerow": ("architektura komputerow", "computer architecture"),
     "Jezyk angielski B2": ("jezyk angielski b2", "english b2"),
-    "Podstawy technologii webowych": ("podstawy technologii webowych", "web technologies basics", "web technologies"),
+    "Technologie internetowe": ("technologie internetowe", "web technologies", "web technologies basics"),
     "Programowanie obiektowe": ("programowanie obiektowe", "object-oriented programming", "oop"),
     "Inzynieria oprogramowania": ("inzynieria oprogramowania", "software engineering"),
     "Programowanie aplikacji webowych": ("programowanie aplikacji webowych", "web application development", "web applications"),
     "Statystyka dla informatykow": ("statystyka dla informatykow", "statistics for computer scientists", "statistics"),
-    "Bezpieczenstwo systemow IT": ("bezpieczenstwo systemow it", "it systems security", "security"),
+    "Bezpieczenstwo systemow": ("bezpieczenstwo systemow", "system security", "it systems security", "security"),
     "Projekt zespolowy": ("projekt zespolowy", "team software project", "team project"),
-    "Chmury obliczeniowe": ("chmury obliczeniowe", "cloud computing"),
+    "Chmura obliczeniowa": ("chmura obliczeniowa", "chmury obliczeniowe", "cloud computing"),
     "Aplikacje mobilne": ("aplikacje mobilne", "mobile applications", "mobile apps"),
     "Hurtownie danych": ("hurtownie danych", "data warehouses", "data warehousing"),
     "Metody numeryczne": ("metody numeryczne", "numerical methods"),
+    "Podstawy elektroniki": ("podstawy elektroniki", "electronics basics"),
+    "Uczenie maszynowe": ("uczenie maszynowe", "machine learning"),
+    "Grafika komputerowa": ("grafika komputerowa", "computer graphics"),
+    "Administracja systemami": ("administracja systemami", "system administration"),
+    "DevOps i CI/CD": ("devops i ci/cd", "devops", "ci/cd", "devops and ci/cd"),
+    "Praktyka zawodowa": ("praktyka zawodowa", "internship"),
+    "Analiza danych": ("analiza danych", "data analysis"),
+    "Projektowanie interfejsow": ("projektowanie interfejsow", "user interface design", "ui design"),
+    "Seminarium dyplomowe": ("seminarium dyplomowe", "diploma seminar"),
+    "Praca inzynierska": ("praca inzynierska", "pracy inzynierskiej", "engineering thesis"),
+    "Etyka i prawo w IT": ("etyka i prawo w it", "ethics and law in it"),
 }
 
 
@@ -284,8 +291,8 @@ def expand_query(question: str) -> str:
         ("zaliczenie", "ocena", "oceniany", "wymagania zaliczeniowe", "assessment", "grading"): [
             "assessment_method", "assessment", "grading", "passing", "zaliczenie", "ocena"
         ],
-        ("egzamin", "test", "kolokwium", "termin", "exam", "date"): [
-            "exam_date", "exam rules", "termin egzaminu", "test", "kolokwium"
+        ("egzamin", "test", "kolokwium", "termin", "obrona", "exam", "date", "defense"): [
+            "exam_date", "exam rules", "termin egzaminu", "test", "kolokwium", "obrona", "defense"
         ],
         ("poprawa", "poprawic", "sesja poprawkowa", "retake"): [
             "retake rules", "sesja poprawkowa", "poprawa egzaminu"

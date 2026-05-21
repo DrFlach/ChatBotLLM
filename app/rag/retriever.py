@@ -6,14 +6,14 @@ from app.rag.vector_store import VectorStore
 
 
 SUBJECT_ALIASES = {
-    "Bazy danych": ("bazy danych", "baz danych", "databases", "database"),
+    "Bazy danych": ("bazy danych", "baz danych", "bazach danych", "databases", "database"),
     "Algorytmy i struktury danych": (
         "algorytmy i struktury danych",
         "algorytmow i struktur danych",
         "algorithms and data structures",
         "algorithms",
     ),
-    "Systemy operacyjne": ("systemy operacyjne", "systemow operacyjnych", "operating systems"),
+    "Systemy operacyjne": ("systemy operacyjne", "systemow operacyjnych", "systemach operacyjnych", "operating systems"),
     "Sieci komputerowe": ("sieci komputerowe", "computer networks"),
     "Wstep do programowania": ("wstep do programowania", "introduction to programming", "programming"),
     "Matematyka dyskretna": ("matematyka dyskretna", "discrete mathematics"),
@@ -48,7 +48,10 @@ def retrieve(question: str, top_k: int | None = None) -> list[dict]:
     settings = get_settings()
     store = get_vector_store()
     limit = top_k or settings.top_k
+    expanded_question = expand_query(question)
     results = store.search(question, limit)
+    if expanded_question != question:
+        results = _merge_results(store.search(expanded_question, limit), results)
 
     if _is_subject_list_question(question):
         results = _merge_results(_structured_subject_results(store, question), results)
@@ -269,6 +272,45 @@ def _regulation_query_terms(question: str) -> str:
     if "ects" in lowered or "punkt" in lowered:
         base_terms.extend(["punkty ECTS", "ECTS rules"])
     return " ".join(base_terms)
+
+
+def expand_query(question: str) -> str:
+    lowered = _normalize_text(question)
+    additions: list[str] = []
+    groups = {
+        ("prowadzi", "uczy", "wykladowca", "prowadzacy", "teaches", "lecturer", "responsible"): [
+            "lecturer", "teacher", "prowadzacy", "wykladowca"
+        ],
+        ("zaliczenie", "ocena", "oceniany", "wymagania zaliczeniowe", "assessment", "grading"): [
+            "assessment_method", "assessment", "grading", "passing", "zaliczenie", "ocena"
+        ],
+        ("egzamin", "test", "kolokwium", "termin", "exam", "date"): [
+            "exam_date", "exam rules", "termin egzaminu", "test", "kolokwium"
+        ],
+        ("poprawa", "poprawic", "sesja poprawkowa", "retake"): [
+            "retake rules", "sesja poprawkowa", "poprawa egzaminu"
+        ],
+        ("plagiat", "sciaganie", "plagiarism"): [
+            "plagiarism", "plagiat", "niesamodzielne wykonanie"
+        ],
+        ("konsultacje", "dyzur", "office hours", "consultation"): [
+            "consultations", "office hours", "konsultacje", "dyzur"
+        ],
+        ("przedmioty", "kursy", "subjects", "courses"): [
+            "subject", "subjects", "courses", "przedmioty"
+        ],
+        ("semestr", "semester"): [
+            "semester", "semestr"
+        ],
+    }
+    for markers, terms in groups.items():
+        if any(marker in lowered for marker in markers):
+            additions.extend(terms)
+    if _is_regulation_question(question):
+        additions.append(_regulation_query_terms(question))
+    if not additions:
+        return question
+    return f"{question} {' '.join(additions)}"
 
 
 def _is_subject_list_question(question: str) -> bool:

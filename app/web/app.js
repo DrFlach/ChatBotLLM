@@ -57,7 +57,7 @@ function addMessage(text, role, sources = []) {
     title.textContent = "Źródła";
     wrapper.appendChild(title);
 
-    sources.slice(0, 4).forEach((source) => {
+    sources.slice(0, 3).forEach((source) => {
       wrapper.appendChild(createSourceCard(source));
     });
     article.appendChild(wrapper);
@@ -143,9 +143,14 @@ function createSourceCard(source) {
   if (source.score != null) technical.push(`score ${source.score.toFixed(3)}`);
   if (source.chunk_number != null) technical.push(`chunk ${source.chunk_number}`);
   if (technical.length > 0) {
+    const details = document.createElement("details");
+    details.className = "technical-details";
+    const summary = document.createElement("summary");
+    summary.textContent = "Szczegóły techniczne";
     const muted = document.createElement("small");
     muted.textContent = technical.join(" · ");
-    item.appendChild(muted);
+    details.append(summary, muted);
+    item.appendChild(details);
   }
 
   return item;

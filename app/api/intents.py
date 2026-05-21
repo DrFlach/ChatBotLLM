@@ -45,8 +45,14 @@ def detect_intent(question: str) -> IntentResult:
         return IntentResult("thanks", language, _thanks_answer(language))
     if _matches(normalized, _GOODBYE_PL, _GOODBYE_EN):
         return IntentResult("goodbye", language, _goodbye_answer(language))
+    ambiguous = _ambiguous_answer(normalized, language)
+    if ambiguous:
+        return IntentResult("ambiguous_study_question", language, ambiguous)
+    category = _study_intent(normalized)
+    if category:
+        return IntentResult(category, language)
     if _is_study_program_question(normalized):
-        return IntentResult("study_program", language)
+        return IntentResult("ambiguous_study_question", language, _generic_ambiguous_answer(language))
     return IntentResult("out_of_scope", language, OUT_OF_SCOPE_EN if language == "en" else OUT_OF_SCOPE_PL)
 
 
@@ -104,13 +110,17 @@ _STUDY_TERMS = {
     "plagiat",
     "wykladowca",
     "wykladowcy",
+    "wykladowc",
     "prowadzacy",
     "prowadzi",
+    "uczy",
+    "odpowiada",
     "teaches",
     "taught",
     "lecturer",
     "lecturers",
     "konsultacje",
+    "dyzur",
     "consultation",
     "consultations",
     "office hours",
@@ -177,6 +187,79 @@ def _is_study_program_question(normalized: str) -> bool:
     if tokens.intersection(_STUDY_TERMS):
         return True
     return any(term in normalized for term in _STUDY_TERMS if " " in term)
+
+
+def _study_intent(normalized: str) -> str | None:
+    if _has_any(normalized, ("plagiat", "sciaganie", "plagiarism")):
+        return "plagiarism"
+    if _has_any(normalized, ("poprawic", "poprawa", "sesja poprawkowa", "retake")):
+        return "retake_rules"
+    if _has_any(normalized, ("ects", "punktow", "credits")):
+        return "ects"
+    if _has_any(normalized, ("zasady egzamin", "zasady egzaminow", "jak wyglada egzamin", "exam rules")):
+        return "exam_rules"
+    if _has_any(normalized, ("zasady zaliczen", "zasady zaliczenia", "passing rules")):
+        return "passing_rules"
+    if _has_any(normalized, ("regulamin", "regulations")):
+        return "exam_rules"
+    if _has_any(normalized, ("konsultacje", "dyzur", "office hours", "consultation")):
+        return "consultation"
+    if _has_any(normalized, ("kiedy", "termin", "when", "date", "scheduled")) and _has_any(normalized, ("egzamin", "test", "exam")):
+        return "exam_date"
+    if _has_any(normalized, ("zaliczenie", "zaliczen", "ocena", "oceniany", "wymagania zaliczeniowe", "assessment", "assessed", "grading")):
+        return "assessment"
+    if _has_any(normalized, ("kto prowadzi", "kto uczy", "wykladowca", "prowadzacy", "kto odpowiada", "who teaches", "who is the lecturer", "who runs", "who is responsible")):
+        return "lecturer"
+    if _has_any(normalized, ("co obejmuje", "czego uczymy", "o czym jest", "opisz", "zakres", "what is covered", "what do we learn", "describe", "course about")):
+        return "course_description"
+    if _has_any(normalized, ("jakie przedmioty", "lista przedmiotow", "przedmioty", "subjects", "courses")) and _has_any(normalized, ("semestr", "semester")):
+        return "subject_list"
+    return None
+
+
+def _ambiguous_answer(normalized: str, language: str) -> str | None:
+    ambiguous_terms = {
+        "bazy danych",
+        "baz danych",
+        "databases",
+        "egzamin",
+        "exam",
+        "konsultacje",
+        "consultations",
+        "office hours",
+        "sylabus",
+        "syllabus",
+        "semestr 2",
+        "semester 2",
+    }
+    trimmed = normalized.strip(" ?!.")
+    if trimmed not in ambiguous_terms:
+        return None
+    if language == "en":
+        return (
+            "I found a topic related to the study program. You can ask more specifically, for example:\n"
+            "- Who teaches Databases?\n"
+            "- What is covered in Databases?\n"
+            "- How is Databases assessed?\n"
+            "- When is the Databases exam?"
+        )
+    return (
+        "Znalazłem temat związany z programem studiów. Możesz doprecyzować pytanie, np.:\n"
+        "- Kto prowadzi Bazy danych?\n"
+        "- Co obejmuje przedmiot Bazy danych?\n"
+        "- Jak wygląda zaliczenie Bazy danych?\n"
+        "- Kiedy jest egzamin z Baz danych?"
+    )
+
+
+def _generic_ambiguous_answer(language: str) -> str:
+    if language == "en":
+        return "I found a study-program topic, but I need a more specific question about subjects, assessment, exams, lecturers or regulations."
+    return "Rozpoznaję temat związany z programem studiów, ale potrzebuję bardziej konkretnego pytania o przedmioty, zaliczenia, egzaminy, prowadzących albo regulamin."
+
+
+def _has_any(text: str, markers: tuple[str, ...]) -> bool:
+    return any(marker in text for marker in markers)
 
 
 def _help_answer(language: str) -> str:

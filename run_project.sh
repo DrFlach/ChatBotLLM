@@ -12,7 +12,7 @@ echo ""
 
 cd "$PROJECT_DIR"
 
-echo "[1/7] Checking Python..."
+echo "[1/8] Checking Python..."
 if ! command -v python3 &> /dev/null; then
     echo "ERROR: python3 is not installed."
     echo "Install it with:"
@@ -20,7 +20,7 @@ if ! command -v python3 &> /dev/null; then
     exit 1
 fi
 
-echo "[2/7] Creating virtual environment if needed..."
+echo "[2/8] Creating virtual environment if needed..."
 if [ ! -d "$VENV_DIR" ]; then
     python3 -m venv "$VENV_DIR"
     echo "Virtual environment created."
@@ -28,21 +28,22 @@ else
     echo "Virtual environment already exists."
 fi
 
-echo "[3/7] Activating virtual environment..."
+echo "[3/8] Activating virtual environment..."
 source "$VENV_DIR/bin/activate"
 
-echo "[4/7] Upgrading pip..."
+echo "[4/8] Upgrading pip..."
 python -m pip install --upgrade pip
 
-echo "[5/7] Installing requirements..."
+echo "[5/8] Installing requirements..."
 pip install -r requirements.txt
 
-echo "[6/7] Building FAISS index from documents..."
+echo "[6/8] Rebuilding FAISS index from data/raw..."
 python scripts/ingest_documents.py
 
-echo "[7/7] Running tests..."
+echo "[7/8] Running tests..."
 pytest
 
+echo "[8/8] Starting FastAPI server..."
 echo ""
 echo "===================================="
 echo " Project is ready!"
@@ -57,7 +58,8 @@ echo ""
 echo "Health check:"
 echo "http://127.0.0.1:8000/health"
 echo ""
-echo "Starting server..."
+echo "Config:"
+echo "http://127.0.0.1:8000/config"
 echo ""
 
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000

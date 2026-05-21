@@ -48,7 +48,7 @@ class ChatResponse(BaseModel):
 @router.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest) -> ChatResponse:
     intent = detect_intent(request.question)
-    if intent.intent != "study_program":
+    if intent.intent not in _RAG_INTENTS:
         return ChatResponse(answer=intent.answer or "", sources=[], intent=intent.intent)
 
     try:
@@ -57,7 +57,8 @@ def chat(request: ChatRequest) -> ChatResponse:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
 
     answer = generate_answer(request.question, contexts)
-    sources = [_format_source(item) for item in contexts[:4]]
+    source_limit = _source_limit(request.question)
+    sources = [_format_source(item) for item in contexts[:source_limit]]
     return ChatResponse(answer=answer, sources=sources, intent=intent.intent)
 
 
@@ -103,3 +104,39 @@ def _format_source(item: dict) -> Source:
         metadata=metadata,
         preview=" ".join(item.get("text", "").split())[:350],
     )
+
+
+def _source_limit(question: str) -> int:
+    lowered = question.lower()
+    teacher_markers = (
+        "kto prowadzi",
+        "kto jest prowadzącym",
+        "kto jest prowadzacym",
+        "kto uczy",
+        "jaki wykładowca",
+        "jaki wykladowca",
+        "kto odpowiada",
+        "who teaches",
+        "who is the lecturer",
+        "who runs",
+        "who is responsible",
+        "lecturer for",
+    )
+    if any(marker in lowered for marker in teacher_markers):
+        return 2
+    return 3
+
+
+_RAG_INTENTS = {
+    "subject_list",
+    "course_description",
+    "lecturer",
+    "consultation",
+    "assessment",
+    "exam_date",
+    "exam_rules",
+    "passing_rules",
+    "retake_rules",
+    "plagiarism",
+    "ects",
+}

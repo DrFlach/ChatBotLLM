@@ -83,6 +83,12 @@ def _extractive_fallback(question: str, contexts: list[dict]) -> str:
     if _is_consultation_question(question):
         consultation_answer = _consultation_answer(question, contexts, language)
         return consultation_answer or _missing_answer(question)
+    if subject and _is_teacher_question(question):
+        teacher_answer = _teacher_answer(question, contexts, language, subject)
+        return teacher_answer or _missing_answer(question)
+    if subject and _is_exam_date_question(question):
+        exam_date_answer = _exam_date_answer(question, contexts, language, subject)
+        return exam_date_answer or _missing_answer(question)
 
     if subject:
         contexts = _subject_contexts(contexts, subject)
@@ -149,7 +155,10 @@ def _normalize_token(token: str) -> str:
 
 
 def detect_language(text: str) -> str:
-    english_markers = {"what", "when", "where", "who", "which", "how", "are", "is", "the", "for", "course", "subjects"}
+    english_markers = {
+        "what", "when", "where", "who", "which", "how", "are", "is", "the", "for", "course", "subjects",
+        "tell", "me", "joke", "weather", "databases", "algorithms", "operating", "systems", "computer", "networks", "programming",
+    }
     polish_markers = {"jak", "jakie", "kiedy", "gdzie", "kto", "czy", "dla", "oraz", "semestrze", "przedmioty"}
     lowered = text.lower()
     if any(char in lowered for char in "ąćęłńóśźż"):
@@ -276,6 +285,32 @@ def _assessment_answer(question: str, contexts: list[dict], language: str) -> st
 
     sentence_answer = _sentence_answer(question, relevant, language, max_sentences=3)
     return _remove_raw_field_prefixes(sentence_answer) if sentence_answer else None
+
+
+def _teacher_answer(question: str, contexts: list[dict], language: str, subject: str) -> str | None:
+    relevant = _subject_contexts(contexts, subject)
+    metadata = _best_subject_metadata(relevant, subject)
+    lecturer = metadata.get("lecturer") if metadata else None
+    subject_name = str(metadata.get("subject") if metadata and metadata.get("subject") else subject)
+    if not lecturer:
+        return None
+    if language == "en":
+        return f"The {_english_subject_name(subject_name)} course is taught by {lecturer}."
+    return f"Przedmiot {subject_name} prowadzi {_polish_person_name(str(lecturer))}."
+
+
+def _exam_date_answer(question: str, contexts: list[dict], language: str, subject: str) -> str | None:
+    relevant = _subject_contexts(contexts, subject)
+    metadata = _best_subject_metadata(relevant, subject)
+    subject_name = str(metadata.get("subject") if metadata and metadata.get("subject") else subject)
+    exam_date = metadata.get("exam_date") if metadata else None
+    if not exam_date:
+        exam_date = _find_exam_date(subject_name, relevant)
+    if not exam_date:
+        return None
+    if language == "en":
+        return f"The exam/test for {_english_subject_name(subject_name)} is scheduled for {_english_date(str(exam_date))}."
+    return f"Egzamin/test z przedmiotu {subject_name} odbywa się {exam_date}."
 
 
 def _regulation_answer(question: str, contexts: list[dict], language: str) -> str | None:
@@ -468,6 +503,21 @@ def _best_structured_course_metadata(contexts: list[dict], subject: str | None) 
     return structured[0]
 
 
+def _best_subject_metadata(contexts: list[dict], subject: str | None) -> dict | None:
+    candidates = [
+        context.get("metadata", {})
+        for context in contexts
+        if context.get("metadata", {}).get("subject")
+    ]
+    if not candidates:
+        return None
+    if subject:
+        for metadata in candidates:
+            if _plain(str(metadata.get("subject", ""))) == _plain(subject):
+                return metadata
+    return candidates[0]
+
+
 def _subject_contexts(contexts: list[dict], subject: str | None) -> list[dict]:
     if not subject:
         return contexts
@@ -511,7 +561,34 @@ def _find_exam_date(subject: str, contexts: list[dict]) -> str | None:
 
 def _is_assessment_question(question: str) -> bool:
     lowered = _plain(question)
-    return any(marker in lowered for marker in ("zaliczenie", "zaliczyc", "assessment", "assess", "exam", "egzamin", "passing", "test", "ocen"))
+    if _is_teacher_question(question) or _is_exam_date_question(question):
+        return False
+    return any(marker in lowered for marker in ("zaliczenie", "zaliczyc", "wymagania zaliczeniowe", "assessment", "assess", "grading", "exam", "egzamin", "passing", "test", "ocen"))
+
+
+def _is_teacher_question(question: str) -> bool:
+    lowered = _plain(question)
+    markers = (
+        "kto prowadzi",
+        "kto jest prowadzacym",
+        "kto uczy",
+        "jaki wykladowca",
+        "kto odpowiada",
+        "prowadzacy",
+        "who teaches",
+        "who is the lecturer",
+        "who runs",
+        "who is responsible",
+        "lecturer for",
+    )
+    return any(marker in lowered for marker in markers)
+
+
+def _is_exam_date_question(question: str) -> bool:
+    lowered = _plain(question)
+    date_markers = ("kiedy", "termin", "when", "date", "scheduled")
+    exam_markers = ("egzamin", "test", "exam")
+    return any(marker in lowered for marker in date_markers) and any(marker in lowered for marker in exam_markers)
 
 
 def _is_regulation_question(question: str) -> bool:
@@ -551,12 +628,18 @@ def _is_course_description_question(question: str) -> bool:
     markers = (
         "opis",
         "obejmuje",
+        "czego uczymy",
         "czego dotyczy",
+        "o czym jest",
         "zakres",
+        "opisz",
         "sylabus",
         "description",
         "covered",
         "covers",
+        "what do we learn",
+        "describe",
+        "course about",
         "syllabus",
         "about",
     )

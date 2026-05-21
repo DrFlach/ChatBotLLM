@@ -272,3 +272,169 @@ def test_databases_description_includes_lecturer_semester_and_ects(monkeypatch) 
     assert "2 semestrze" in answer
     assert "5 ECTS" in answer
     assert "dr hab. Maria Wiśniewska" in answer
+
+
+def test_polish_teacher_question_is_short_and_direct(monkeypatch) -> None:
+    monkeypatch.setattr("app.rag.generator.get_settings", lambda: type("Settings", (), {"openai_api_key": None})())
+    contexts = [
+        {
+            "text": "structured row",
+            "metadata": {
+                "field": "Informatyka",
+                "semester": "2",
+                "subject": "Bazy danych",
+                "ects": "5",
+                "lecturer": "dr hab. Maria Wisniewska",
+                "description": "Model relacyjny, SQL, normalizacja, transakcje, indeksy i projektowanie schematow baz danych.",
+            },
+            "score": 1.0,
+        }
+    ]
+
+    answer = generate_answer("Kto prowadzi Bazy danych?", contexts)
+
+    assert answer == "Przedmiot Bazy danych prowadzi dr hab. Maria Wiśniewska."
+    assert "obejmuje" not in answer
+    assert "model relacyjny" not in answer
+
+
+def test_english_teacher_question_is_short_and_direct(monkeypatch) -> None:
+    monkeypatch.setattr("app.rag.generator.get_settings", lambda: type("Settings", (), {"openai_api_key": None})())
+    contexts = [
+        {
+            "text": "structured row",
+            "metadata": {
+                "field": "Informatyka",
+                "semester": "2",
+                "subject": "Bazy danych",
+                "ects": "5",
+                "lecturer": "dr hab. Maria Wisniewska",
+                "description": "Model relacyjny, SQL, normalizacja, transakcje, indeksy i projektowanie schematow baz danych.",
+            },
+            "score": 1.0,
+        }
+    ]
+
+    answer = generate_answer("Who teaches Databases?", contexts)
+
+    assert answer == "The Databases course is taught by dr hab. Maria Wisniewska."
+    assert "covers" not in answer
+    assert "relational model" not in answer
+
+
+def test_course_description_question_still_includes_topics(monkeypatch) -> None:
+    monkeypatch.setattr("app.rag.generator.get_settings", lambda: type("Settings", (), {"openai_api_key": None})())
+    contexts = [
+        {
+            "text": "structured row",
+            "metadata": {
+                "field": "Informatyka",
+                "semester": "2",
+                "subject": "Bazy danych",
+                "ects": "5",
+                "lecturer": "dr hab. Maria Wisniewska",
+                "description": "Model relacyjny, SQL, normalizacja, transakcje, indeksy i projektowanie schematow baz danych.",
+            },
+            "score": 1.0,
+        }
+    ]
+
+    answer = generate_answer("Co obejmuje przedmiot Bazy danych?", contexts)
+
+    assert "model relacyjny" in answer
+    assert "SQL" in answer
+    assert "projektowanie schematów baz danych" in answer
+
+
+def test_assessment_question_still_includes_assessment_method(monkeypatch) -> None:
+    monkeypatch.setattr("app.rag.generator.get_settings", lambda: type("Settings", (), {"openai_api_key": None})())
+    contexts = [
+        {
+            "text": "structured row",
+            "metadata": {
+                "subject": "Bazy danych",
+                "exam_date": "5 czerwca 2026",
+                "assessment_method": "Test SQL 30%, projekt zespolowy 40%, odpowiedz ustna 30%.",
+            },
+            "score": 1.0,
+        }
+    ]
+
+    answer = generate_answer("Jak wygląda zaliczenie przedmiotu Bazy danych?", contexts)
+
+    assert "- test SQL 30%" in answer
+    assert "- projekt zespolowy 40%" in answer
+
+
+def test_polish_teacher_variant_kto_uczy(monkeypatch) -> None:
+    monkeypatch.setattr("app.rag.generator.get_settings", lambda: type("Settings", (), {"openai_api_key": None})())
+    contexts = [{"text": "row", "metadata": {"subject": "Bazy danych", "lecturer": "dr hab. Maria Wisniewska"}, "score": 1.0}]
+
+    answer = generate_answer("Kto uczy Baz danych?", contexts)
+
+    assert answer == "Przedmiot Bazy danych prowadzi dr hab. Maria Wiśniewska."
+
+
+def test_english_teacher_variant_lecturer_for(monkeypatch) -> None:
+    monkeypatch.setattr("app.rag.generator.get_settings", lambda: type("Settings", (), {"openai_api_key": None})())
+    contexts = [{"text": "row", "metadata": {"subject": "Bazy danych", "lecturer": "dr hab. Maria Wisniewska"}, "score": 1.0}]
+
+    answer = generate_answer("Who is the lecturer for Databases?", contexts)
+
+    assert answer == "The Databases course is taught by dr hab. Maria Wisniewska."
+
+
+def test_polish_assessment_variant_ocena(monkeypatch) -> None:
+    monkeypatch.setattr("app.rag.generator.get_settings", lambda: type("Settings", (), {"openai_api_key": None})())
+    contexts = [
+        {
+            "text": "row",
+            "metadata": {
+                "subject": "Bazy danych",
+                "assessment_method": "Test SQL 30%, projekt zespolowy 40%, odpowiedz ustna 30%.",
+            },
+            "score": 1.0,
+        }
+    ]
+
+    answer = generate_answer("Z czego jest ocena z Baz danych?", contexts)
+
+    assert "- test SQL 30%" in answer
+    assert "- projekt zespolowy 40%" in answer
+
+
+def test_english_assessment_variant_grading(monkeypatch) -> None:
+    monkeypatch.setattr("app.rag.generator.get_settings", lambda: type("Settings", (), {"openai_api_key": None})())
+    contexts = [
+        {
+            "text": "row",
+            "metadata": {
+                "subject": "Bazy danych",
+                "assessment_method": "Test SQL 30%, projekt zespolowy 40%, odpowiedz ustna 30%.",
+            },
+            "score": 1.0,
+        }
+    ]
+
+    answer = generate_answer("What is the grading for Databases?", contexts)
+
+    assert "- SQL test 30%" in answer
+    assert "- team project 40%" in answer
+
+
+def test_polish_exam_date_variant(monkeypatch) -> None:
+    monkeypatch.setattr("app.rag.generator.get_settings", lambda: type("Settings", (), {"openai_api_key": None})())
+    contexts = [{"text": "row", "metadata": {"subject": "Bazy danych", "exam_date": "5 czerwca 2026"}, "score": 1.0}]
+
+    answer = generate_answer("Kiedy jest egzamin z Baz danych?", contexts)
+
+    assert answer == "Egzamin/test z przedmiotu Bazy danych odbywa się 5 czerwca 2026."
+
+
+def test_english_exam_date_variant(monkeypatch) -> None:
+    monkeypatch.setattr("app.rag.generator.get_settings", lambda: type("Settings", (), {"openai_api_key": None})())
+    contexts = [{"text": "row", "metadata": {"subject": "Bazy danych", "exam_date": "5 czerwca 2026"}, "score": 1.0}]
+
+    answer = generate_answer("When is the Databases exam?", contexts)
+
+    assert answer == "The exam/test for Databases is scheduled for 5 June 2026."

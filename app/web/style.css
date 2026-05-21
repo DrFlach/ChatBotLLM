@@ -356,7 +356,16 @@ h1 {
   color: var(--muted);
 }
 
-.source-card small {
+.technical-details {
+  color: var(--muted);
+}
+
+.technical-details summary {
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.technical-details small {
   color: var(--muted);
   font-size: 12px;
 }
